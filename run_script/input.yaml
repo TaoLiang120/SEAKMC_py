@@ -1,0 +1,365 @@
+system:
+    Inteval4ShowProgress: 10
+    Restart:
+        LoadRestart: True
+        LoadFile: False
+        WriteRestart: True
+        AVStep4Restart: 1000
+        KMCStep4Restart: 1
+        Reset_Simulation_Time: False
+    significant_figures: 6
+    float_precision: 3
+    VerySmallNumber: 1.0e-20
+potential:
+    species:
+        - Fe
+        - Fe
+        - P
+    masses:
+        - 1, 55.847
+        - 2, 100.0
+    bondlengths:
+        - 1, 1, 2.5
+    coordnums:
+        - 1, 8
+        - 2, 12
+        - 3, 6
+    bondlengths4LAS: bondlengths
+    coordnums4LAS: coordnums
+    pair_style: eam/fs
+    FileName: Fe-P.eam.fs
+    Path2Pot: False
+    pair_coeff: False
+    cutneighmax: max(bondlengths)*1.1
+    OpenKIM:
+      OpenKIM: False
+      kim_init: False
+      kim_interaction: False
+      kim_param: False
+force_evaluator:
+    Bin: pylammps
+    Path2Bin: False
+    Style: pylammps
+    Screen: False
+    LogFile: False
+    nproc: 1
+    processors: False
+    partition: False
+    NSteps4Relax: 10000
+    timestep: 0.002
+    Relaxation:
+       BoxRelax: False
+       InitTemp4Opt: 0.0
+       TargetTemp4NVT: 5.0
+       NVTSteps4Opt: 10000    
+    RinputOpt: False
+    RinputMD0: False
+    nproc4ReCal: 1
+    OutFileHeader:
+        - None
+    ImportValue4RinputOpt: False
+    Keys4ImportValue4RinputOpt:
+        - Timestep, time_step
+data:
+    atom_style: atomic
+    FileName: data.small.dat
+    Relaxed: False
+    BoxRelax: False
+    MoleDyn: False
+    RinputMD: False
+    RinputMD0: False
+    RinputOpt: False
+    boundary: "p p p"
+    dimensions: 3
+    units: metal
+kinetic_MC:
+    NSteps: 1
+    Temp: 800
+    AccStyle: NoAcc
+    DispStyle: SP
+    EnCut4Transient: 0.5
+    Tol4Disp: 0.1
+    Tol4Barr: 0.03
+    Handle_no_Backward: OUT
+    NMaxBasin: NA
+    Sorting: False
+defect_bank:
+    Preload: False
+    LoadDB: False
+    LoadPath: DefectBank
+    SavePath: DefectBank
+    Recycle: False
+    SaveDB: False
+    Ratio4DispLoad: 0.8
+    SortDisps: False
+    NMax4DB: 200
+    NMin4DB: 40
+    IgnoreType: True
+    Tol4Disp: 0.1
+    FileHeader: DB
+    OutIndex: True
+    Scaling: 1.0
+dynamic_matrix:
+    SNC: False
+    CalPrefactor: False
+    NMax4SNC: 1000
+    displacement: 0.000001
+    delimiter: " "
+    LowerHalfMat: False
+    Method4Prefactor: harmonic
+    VibCut: 1.0e-8
+saddle_point:
+    Prefactor: 1.0
+    CalBarrsInData: False
+    CalEbiasInData: False
+    Thres4Recalib: None
+    BarrierCut: 10.0
+    BarrierMin: 0.0
+    EbiasCut: NA
+    EbiasMin: NA
+    BackBarrierMin: 0.0
+    DAtomCut: cutneighmax
+    DmagCut: NA
+    DmagMin: 0.0
+    DtotCut: NA
+    DtotMin: 0.0
+    DmaxCut: NA
+    DmaxMin: 0.0
+    DsumCut: NA
+    DsumMin: 0.0
+    DsumrCut: NA
+    DsumrMin: 0.0
+    DmagCut_FI: NA 
+    DmagMin_FI: 0.0
+    DtotCut_FI: NA
+    DtotMin_FI: 0.0
+    DmaxCut_FI: NA
+    DmaxMin_FI: 0.0
+    DsumCut_FI: NA
+    DsumMin_FI: 0.0
+    DsumrCut_FI: NA
+    DsumrMin_FI: 0.0
+    DmagCut_FS: NA
+    DmagMin_FS: 0.0
+    DtotCut_FS: NA
+    DtotMin_FS: 0.0
+    DmaxCut_FS: NA
+    DmaxMin_FS: 0.0
+    DsumCut_FS: NA
+    DsumMin_FS: 0.0
+    DsumrCut_FS: NA
+    DsumrMin_FS: 0.0
+    ValidSPs:
+        RealtimeValid: False
+        RealtimeDelete: False
+        CheckConnectivity: True
+        NScreenDisp: 0
+        NScreenEng: 0
+        toScreenDisp: NotConn
+        toScreenEng: NotConn
+        AND4ScreenDE: True
+        ScreenDisp: 
+            AND4ScreenD:
+                - True
+            Str4ScreenD:
+                - SP
+            Type4ScreenD:
+                - DMAG
+            AbsVal4ScreenD:
+                - True
+            MinVal4ScreenD:
+                - NA
+            MaxVal4ScreenD:
+                - NA
+        ScreenEng:
+            AND4ScreenE:
+                - True
+            Type4ScreenE:
+                - barrier
+            MinVal4ScreenE:
+                - NA
+            MaxVal4ScreenE:
+                - NA
+        MaxRatio4Dmag: NA
+        MaxRatio4Barr: NA
+        EnTol4AVSP: 0.1
+        Tol4AVSP: 0.1
+        NMax4Dup: 600
+        NCommonMin: 10
+        R2Dmax4tol: 0.1
+        Tol4Disp: 0.1
+        GroupSP: False
+        Angcut4GSP: 10.0
+        MagCut4GSP: 0.1
+        EnCut4GSP: 0.1
+        FindSPType: False
+        AngCut4Type: 5.0
+        MagCut4Type: 0.05
+        EnCut4Type: 0.05
+        LenCut4Type: 0.05
+active_volume:
+    Style: defects
+    NPredef: 0
+    PredefOnly: False
+    PDReduction: True
+    SortD4PDR: False
+    DCut4PDR: 4.0
+    RecursiveRed: False
+    RT_SetMolID: False
+    DefectCenter4RT_SetMolID: Auto
+    R4RT_SetMolID: 30.0
+    FCT4RT_SetMolID:
+        - NA
+        - NA
+        - NA
+        - NA
+        - NA
+        - NA
+    FindDefects:
+          Method: BLCN
+          ReferenceData: optional entry
+          atom_style4Ref: atomic
+          DCut4Def: 0.1
+          Defects: required entry for custom Method
+            - x, y, z cartesian coordinates
+    DActive: cutdefectmax*2.7
+    DBuffer: cutdefectmax*1.5
+    DFixed: cutdefectmax*4.1
+    Overlapping: True
+    DCut4noOverlap: 8.4*cutdefectmax
+    Stack4noOverlap: False
+    NMax4Def: False
+    NMax4AV: False
+    NMin4AV: 40
+    PointGroupSymm: False
+    NMax4PG: 1000
+    Sorting: True
+    Sort_by: Auto
+    SortingSpacer:
+       - 0.3
+       - 0.3
+       - 0.3
+    SortingShift:
+       - 0.0
+       - 0.0
+       - 0.0
+    SortingBuffer: False
+    SortingFixed: False
+    NMin_perproc: 5
+    NActive: required for "custom" Style
+    NBuffer: optional for "custom" Style
+    NFixed: optional for "custom" Style
+    TurnoffPBC:
+      - False
+      - False
+      - False
+spsearch:
+    Method: dimer
+    NSearch: 10
+    SearchBuffer: False
+    DimerSep: 0.005
+    NMax4Rot: 3
+    NMax4Trans: 1000
+    IgnoreSteps: 4
+    TrialStepsize: 0.01522
+    MaxStepsize: 0.05
+    MinStepsize: 0.003
+    CheckAng: True
+    AngCut: 2.0
+    CheckAngSteps: 50
+    DecayStyle: Fixed
+    DecaySteps: 20
+    DecayRate: 0.71
+    TransHorizon: True
+    En4TransHorizon: 0.1
+    FThres4Rot: 0.1
+    FMin4Rot: 0.001
+    FConv: 1.0e-6
+    EnConv: 1.0e-5
+    DRatio4Relax: 2.0
+    Tol4Connect: 0.3
+    ActiveOnly4SPConfig: True
+    R2Dmax4SPAtom: 0.04
+    DCut4SPAtom: 0.01
+    DynCut4SPAtom: False
+    ShowIterationResults: False
+    Inteval4ShowIterationResults: 1
+    ShowVN4ShowIterationResults: False 
+    ShowCoords4ShowIterationResults: False
+    FixTypes: False
+    FixAxesStr: ALL
+    TaskDist: AV
+    Master_Slave: True
+    HandleVN:
+        CheckAng4Init: True
+        AngTol4Init: 5.0
+        MaxIter4Init: 20
+        NMaxRandVN: 20
+        CenterVN: False
+        NSteps4CenterVN: 5
+        IgnoreSteps: 4
+        ResetVN04Preload: True
+        RatioVN04Preload: 0.2
+        RescaleVN: True
+        RescaleValue: LOGVNRAS
+        Int4ComputeScale: 1
+        TakeMin4MixedRescales: True
+        RescaleStyle4LOGV: SIGMOID
+        Period4MA: 1
+        XRange4LOGV: 20.0
+        PowerOnV: 4
+        Ratio4Zero4LOGV: 0.2
+        MinValue4LOGV: -20.0
+        RescaleStyle4RAS: SIGMOID
+        XRange4RAS: 40.0
+        Ratio4Zero4RAS: 0.3
+        MinSpan4LOGV: 4.0
+        MinSpan4RAS: 40.0
+    LocalRelax:
+        LocalRelax: True
+        InitTemp4Opt: 0.0
+        TargetTemp4NVT: 5.0
+        NVTSteps4Opt: 1000
+    Preloading:
+        Preload: False
+        LoadPath: False
+        Method: Files
+        FileHeader: SPS_AV_
+        Ratio4DispLoad: 0.8
+        SortDisps: False
+        CheckSequence: False
+        FileHeader4Data: SPS_basin_
+    force_evaluator:
+        Screen: False
+        LogFile: False
+        Rinput: False
+        RinputDM: False
+        RinputOpt: False
+        nproc: 1
+        processors: False
+        partition: False
+visual:
+    Screen: True
+    Log: True
+    RCut4Vis: 0.04
+    DCut4Vis: 0.01
+    Invisible: True
+    ShowBuffer: False
+    ShowFixed: False
+    Write_SP_Summary: True
+    Write_Data_SPs:
+        Write_Data_AVs: True
+        Write_KMC_Data: True
+        Write_Prob: True
+        DetailOut: True
+        SPs4Detail: Auto
+        Write_Data_SPs: True
+        Sel_iSPs: AUTO
+        DispStyle4DataSP: Both
+        OutputStyle: SEP
+        Offset: 0
+    Write_AV_SPs:
+        Write_Local_AV: False
+        Write_AV_SPs: False
+        Write_Data_AV_SPs: False
+        DispStyle4AVSP: SP

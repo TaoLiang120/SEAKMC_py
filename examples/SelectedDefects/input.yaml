@@ -1,0 +1,83 @@
+system:
+    Restart:
+        LoadRestart: False
+        LoadFile: False
+        WriteRestart: False
+        KMCstep4Restart: 1
+        Reset_Simulation_Time: False
+    significant_figures: 6
+potential:
+    species:
+        - Fe
+    masses:
+        - 1, 55.847
+    bondlengths:
+        - 1, 1, 2.5
+    coordnums:
+        - 1, 8
+    pair_style: eam/fs
+    Path2Pot: False
+    FileName: Fe-P.eam.fs
+    pair_coeff: False
+force_evaluator:
+    Bin: pylammps
+    RinputOpt: False
+data:
+    atom_style: molecular
+    FileName: dumbbell_vac.data
+    Relaxed: True
+kinetic_MC:
+    NSteps: 4
+    AccStyle: MRM
+    EnCut4Transient: 0.5
+    Handle_no_Backward: stayin
+    DispStyle: FIN
+saddle_point:
+    BarrierCut: 100.0
+    CalBarrsInData: False
+    CalEbiasInData: False
+    ValidSPs:
+        CheckConnectivity: True
+active_volume:
+    Style: defects
+    NPredef: 1
+    PDReduction: True
+    DCut4PDR: 5.0
+    RecursiveRed: False
+    FindDefects:
+        Method: BLCN
+    DActive: 12.0
+    DBuffer: 3.0
+    DFixed: 10
+    Overlapping: False
+    RT_SetMolID: True
+    DefectCenter4RT_SetMolID: auto
+    R4RT_SetMolID: 15.0
+    FCT4RT_SetMolID:
+        - 0.1
+        - 0.9
+        - 0.1
+        - 0.9
+        - 0.1
+        - 0.9
+spsearch:
+    HandleVN:
+        RescaleVN: True
+        CenterVN: True
+    TransHorizon: True
+    NSearch: 10
+    SearchBuffer: False
+    TrialStepsize: 0.015
+    MaxStepsize: 0.05
+    DecayStyle: fixed
+    LocalRelax:
+        LocalRelax: True
+visual:
+    Write_Data_SPs:
+        Write_Data_SPs: True
+        Sel_iSPs: AUTO
+        OutputStyle: SEP
+        DetailOut: True
+        SPs4Detail: Auto
+dynamic_matrix:
+    CalPrefactor: False

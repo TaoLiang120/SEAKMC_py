@@ -1,0 +1,22 @@
+units         metal
+dimension     3
+atom_style    molecular
+atom_modify   map array
+boundary      p p p
+pair_style    eam/fs
+read_data    tmp0.dat
+pair_coeff    *  *  absolute/path/to/Fe-P.eam.fs  Fe P  ##provide absolute path to the potential 
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+timestep    0.002000
+compute     pe  all pe
+compute     ke  all ke
+group        active id <= 161
+group        fixed subtract all active
+fix          freeze fixed setforce 0.0 0.0 0.0
+dump       myDump  all  custom 10000000000 dump.atom.forces id type x y z fx fy fz  ## required for extracting forces for SPS from dump.atom.forces
+dump_modify myDump sort id
+fix nvefix all nve
+run    0
+print   etotal=$(pe+ke)  ## required for extracting energy from log.lammps
+write_data   tmp1.dat  ## required for getting data file for next KMC step

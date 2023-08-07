@@ -1,0 +1,189 @@
+system:
+    Restart:
+        LoadRestart: True
+        LoadFile: False
+        WriteRestart: True
+        AVstep4Restart: 1000
+        KMCstep4Restart: 1
+        Reset_Simulation_Time: False
+potential:
+    species:
+        - Fe
+        - P
+    masses:
+        - 1, 55.847
+    bondlengths:
+        - 1, 1, 2.5
+    coordnums:
+        - 1, 8
+    pair_style: eam/fs
+    FileName: Fe-P.eam.fs
+    Path2Pot: False
+    pair_coeff: False
+    bondlengths4LAS:
+       - 1, 1, 2.5
+    coordnums4LAS:
+       - 1, 8
+force_evaluator:
+    Bin: pylammps
+    Path2Bin: False
+    nproc: 1
+    nproc4ReCal: 1
+    RinputOpt: False
+    OutFileHeaders:
+       - None
+    ImportValue4RinputOpt: False
+    Keys4ImportValue4RinputOpt:
+       - Timestep equal, time_step
+data:
+    atom_style: atomic
+    FileName: data.vac
+    RinputOpt: False
+    BoxRelax: False
+    Relaxed: False
+kinetic_MC:
+    NSteps: 1
+    Temp: 800.0
+    AccStyle: NoAcc
+    EnCut4Transient: 0.5
+    Handle_no_Backward: OUT
+    DispStyle: FI
+    NMaxBasin: NA
+saddle_point:
+    BarrierCut: 10.0
+    Prefactor: 1.0
+    BarrierMin: 0.0
+    DmagCut: NA
+    DmagMin: 0.0
+    CalBarrsInData: False
+    CalEbiasInData: False
+    ValidSPs:
+        RealtimeValid: False
+        RealtimeDelete: False
+        CheckConnectivity: True
+        toScreenDisp: Not
+        toScreenEng: NotConn
+        NScreenDisp: 0
+        NScreenEng: 0
+        ScreenDisp:
+           AND4ScreenD:
+              - True
+           Str4ScreenD:
+              - SP
+           Type4ScreenD:
+              - DMAG
+           AbsVal4ScreenD:
+              - True
+           MinVal4ScreenD:
+              - NA
+           MaxVal4ScreenD:
+              - NA
+        ScreenEng:
+           Type4ScreenE:
+              - Barrier
+           MinVal4ScreenE:
+              - NA
+           MaxVal4ScreenE:
+              - NA
+           AND4ScreenE:
+              - True
+        AND4ScreenDE: True
+        MaxRatio4Dmag: NA
+        MaxRatio4Barr: NA
+active_volume:
+    Style: defects
+    NPredef: 0
+    PredefOnly: False
+    PDReduction: True
+    DCut4PDR: 3.5
+    RecursiveRed: False
+    FindDefects:
+        Method: BLCN
+        Defects:
+            - 27.3567, 27.3567, 27.3567 
+            - 20.3567, 20.3567, 20.3567 
+    DActive: 12.0
+    DBuffer: 2.0
+    DFixed: 10
+    Overlapping: True
+    DCut4noOverlap: 14.0
+    Stack4noOverlap: False
+    PointGroupSymm: False
+    RT_SetMolID: False
+    R4RT_SetMolID: 20.0
+    DefectCenter4RT_SetMolID: AUTO
+    FCT4RT_SetMolID:
+        - INF
+        - INF
+        - INF
+        - INF
+        - INF
+        - INF
+    Sort_by:
+        - D
+        - X
+        - Y
+        - Z
+    SortingSpacer:
+        - 0.3
+        - 0.3
+        - 0.3
+    SortingShift:
+        - 0.0
+        - 0.0
+        - 0.0
+    TurnoffPBC:
+        - False
+        - False
+        - False
+spsearch:
+    NSearch: 10
+    SearchBuffer: False
+    NMax4Trans: 1000
+    TrialStepsize: 0.015
+    MaxStepsize: 0.05
+    HandleVN:
+        CenterVN: False
+        RescaleVN: True
+        RescaleValue: LOGVNRAS
+        Ratio4Zero4LOGV: 0.2
+        Ratio4Zero4RAS: 0.3
+    Master_Slave: True
+    AdaptiveDimerSep: True
+    NBase4ADS: 2500
+    DimerSep: 0.005
+    DimerSepCap: 0.1
+    TransHorizon: True
+    DecaySteps: 20
+    DecayStyle: Fixed
+    CheckAng: True
+    CheckAngSteps: 20
+    LocalRelax:
+        LocalRelax: True
+    force_evaluator:
+        nproc: 1
+    Preloading:
+        Preload: False
+        LoadPath: False
+        SortDisps: False
+        Ratio4DispLoad: 0.8
+        FileHeader: SPS_AV_
+        CheckSequence: False
+        FileHeader4Data: SPS_basin_
+visual:
+    Screen: True
+    Log: True
+    Write_Data_SPs:
+        SPs4Detail: AUTO
+        Sel_iSPs: AUTO
+        OutputStyle: SEP
+        DispStyle4DataSP: BOTH
+dynamic_matrix:
+    SNC: False
+    CalPrefactor: False
+defect_bank:
+    Preload: False
+    Ratio4DispLoad: 0.8
+    LoadDB: False
+    Recycle: False
+    SaveDB: False
