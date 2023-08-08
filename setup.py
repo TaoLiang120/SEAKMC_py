@@ -2,6 +2,7 @@
 
 import os
 from setuptools import setup, find_packages
+import versioneer
 #module_dir = os.path.dirname(os.path.abspath(__file__))
 ##with open('README.rst') as f:
 ##    readme = f.read()
@@ -11,23 +12,32 @@ with open('LICENSE') as f:
 
 setup(
     name = 'seakmc',
+    description = 'Self Evolution Adaptive Kinetic Monte Carlo',
+    long_description="SEAKMC samples the potential energy landscape of a system at its local minimum.",
+    url = 'https://github.com/TaoLiang120/SEAKMC_py',
+    version = versioneer.get_version(),
+    license = license,
+    author = 'Tao Liang',
+    author_email = 'xhtliang120@gmail.com',
+    classifiers=[
+         'Development Status :: 2 - pylammps, lammps/Stable, VASP/Test',
+         'Topic :: Scientific/Engineering :: Physics',
+         'License :: MIT License',
+         'Intended Audience :: Science/Research',
+         'Operating System :: Linux, macOS, Windows(not tested)',
+         'Programming Language :: Python :: 3.0',
+    ],
+    keywords='seakmc',
     packages = find_packages(exclude=('tests','docs')),
     include_package_data = True,
-    version = '2.0.0',
-##  install_requires = ['anaconda>=3.0', 'pycrypto>=1.0', 'monty>=0.7.2',
-##                      'matplotlib>=1.4.2', 'websocket_client>=0.1', 'nose>=1.3',
-##                      'scipy==0.14.0', 'pandas_market_calendars>=0.1'],
-##  extras_require = {'doc': ['codecov>=2.0', 'sphinx>=1.3.1']},
     package_data={
         "seakmc.input": ["*.yaml"],
     },
     entry_points={
         'console_scripts': ['seakmc = seakmc.script.seakmc:main']
         },
-    license = license,
-    description = 'Self Evolution Adaptive Kinetic Monte Carlo',
-    author = 'Tao Liang',
-    author_email = 'xhtliang120@gmail.com',
-##  url = 'https://github.com/ashtonmv/twod_materials',
-##  download_url = 'https://github.com/ashtonmv/twod_materials/tarball/0.0.7',
+    install_requires = ['anaconda>=3.0', 'pymatgen>=2020',
+                        'lammps>=2020', 'mpi4py>=3.0'],
+##  extras_require = {'doc': ['codecov>=2.0', 'sphinx>=1.3.1']},
+    cmdclass=versioneer.get_cmdclass(),
 )
