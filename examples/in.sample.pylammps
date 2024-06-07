@@ -1,0 +1,20 @@
+units         metal
+dimension     3
+atom_style    molecular
+atom_modify   map array
+boundary      p p p
+pair_style    eam/fs
+read_data    tmp0.dat ### code will automatically add Runner_color/
+pair_coeff    *  *  Fe-P.eam.fs  Fe P
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+timestep    0.002000
+compute     pe  all pe
+compute     ke  all ke
+group        active id <= 161  ## number of active atoms
+group        fixed subtract all active
+fix          freeze fixed setforce 0.0 0.0 0.0
+minimize     0.0 1.0e-6 10000 100000
+write_data   tmp1.dat  ### code will automatically add Runner_color/
+
+## for dump and dynamic_matrix commands, code will automatically add Runner_color/ in the front of filename ###

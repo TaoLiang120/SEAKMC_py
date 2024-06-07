@@ -1,0 +1,21 @@
+#!/bin/bash
+# script to run lammps
+# make this file executable and put it into the system defaulted binary folder
+# usage: calllammps input_file with the absolute path
+# get the name of the input file, without the path
+input_file=$(basename $1)
+
+# get the path to the job directory containing the input file
+dir_path=$(dirname $1)
+
+# move into the job directory
+cd $dir_path
+
+# run lammps on the input file
+# usage: path/to/lammps_binary < input_file
+# Recommend to put lammps_binary in the system defaulted binary folder
+lmp_serial < $input_file
+
+#example for mpi run
+#mpirun -np 2 lmp_mpi < $input_file
+#Code will change the number of processors based on input.yaml

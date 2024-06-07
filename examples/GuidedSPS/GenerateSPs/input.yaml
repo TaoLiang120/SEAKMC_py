@@ -1,0 +1,81 @@
+system:
+    Restart:
+        LoadRestart: True
+        LoadFile: False
+        WriteRestart: False
+        KMCstep4Restart: 5
+potential:
+    species:
+        - Fe
+        - P
+    masses:
+        - 1, 55.847
+    bondlengths:
+        - 1, 1, 2.5
+    coordnums:
+        - 1, 8
+    pair_style: eam/fs
+    FileName: Fe-P.eam.fs
+    Path2Pot: False
+    pair_coeff: False
+force_evaluator:
+    Bin: pylammps
+    RinputOpt: False
+data:
+    atom_style: atomic
+    FileName: data.vac
+    Relaxed: False
+kinetic_MC:
+    NSteps: 1
+    Temp: 800.0
+saddle_point:
+    BarrierCut: 2.0
+    Prefactor: 1.0
+    ValidSPs:
+        CheckConnectivity: True
+active_volume:
+    Style: defects
+    PDReduction: True
+    DCut4PDR: 8.0
+    FindDefects:
+        Method: BLCN
+    DActive: 7.7
+    DBuffer: 3.0
+    DFixed: 10
+    Overlapping: True
+    DCut4noOverlap: 14.0
+    PointGroupSymm: True
+spsearch:
+    NSearch: 5
+    SearchBuffer: False
+    TrialStepsize: 0.015
+    MaxStepsize: 0.05
+    CheckAng: False
+    DecayStyle: Contineous
+    LocalRelax:
+        LocalRelax: True
+    Preloading:
+        Preload: False
+        LoadPath: GeneratedSPs
+        SortDisps: True
+        FileHeader: DB_b_
+        CheckSequence: True
+        Ratio4DispLoad: 0.8
+        Method: Files
+        FileHeader4Data: DB_basin_
+visual:
+    Write_Data_SPs:
+        DetailOut: True
+        SPs4Detail: AUTO
+        Sel_iSPs: AUTO
+        OutputStyle: SEP
+        DispStyle4DataSP: BOTH
+dynamic_matrix:
+    SNC: False
+    CalPrefactor: False
+defect_bank:
+    Preload: False
+    LoadDB: False
+    Recycle: True
+    SaveDB: True
+    SavePath: GeneratedSPs

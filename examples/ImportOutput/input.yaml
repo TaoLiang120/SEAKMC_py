@@ -1,0 +1,72 @@
+system:
+    Restart:
+        LoadRestart: False
+        LoadFile: False
+        WriteRestart: False
+potential:
+    species:
+        - Fe
+    masses:
+        - 1, 55.847
+    bondlengths:
+        - 1, 1, 2.5
+    coordnums:
+        - 1, 8
+    pair_style: eam/fs
+    Path2Pot: False
+    FileName: Fe-P.eam.fs
+    pair_coeff: False
+force_evaluator:
+    Bin: pylammps
+    RinputOpt: in.relax
+    ImportValue4RinputOpt: True
+    OutFileHeaders:
+       - stress
+    Keys4ImportValue4RinputOpt:
+       - Timestep equal, time_step
+data:
+    atom_style: molecular
+    FileName: data.vac
+    Relaxed: True
+    RinputOpt: False
+kinetic_MC:
+    NSteps: 3
+    Temp: 300.0
+    AccStyle: MRM
+    EnCut4Transient: 0.4
+    Handle_no_Backward: stayin
+    DispStyle: FIN
+saddle_point:
+    Prefactor: 5.0
+    ValidSPs:
+        CheckConnectivity: True
+active_volume:
+    Style: defects
+    PDReduction: True
+    DCut4PDR: 5.0
+    FindDefects:
+        Method: BLCN
+    DActive: 7.7
+    DBuffer: 3.0
+    DFixed: 10
+    Overlapping: False
+spsearch:
+    HandleVN:
+        RescaleVN: True
+        CenterVN: True
+    TransHorizon: True
+    NSearch: 10
+    SearchBuffer: False
+    DecayStyle: fixed
+    LocalRelax:
+        LocalRelax: True
+visual:
+    Write_Data_SPs:
+        Write_Data_SPs: True
+        Sel_iSPs: AUTO
+        OutputStyle: SEP
+        DetailOut: True
+        SPs4Detail: Auto
+dynamic_matrix:
+    SNC: False
+    CalPrefactor: False
