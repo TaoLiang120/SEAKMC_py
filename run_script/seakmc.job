@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH -J e111_s100
+#SBATCH -A ACF-UTK0035
+#SBATCH -t 144:00:00
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --partition=condo-hxu8
+#SBATCH --qos=condo
+#SBATCH --export=ALL
+
+cd $SLURM_SUBMIT_DIR
+module unload PE-intel
+module load anaconda3
+source $ANACONDA3_SH
+conda activate /lustre/isaac/scratch/tliang7/condatest
+##module load lammps/29Sep2021_intel
+srun -n 1 ~/bin/run_seakmc.py

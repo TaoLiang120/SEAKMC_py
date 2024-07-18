@@ -1,0 +1,142 @@
+variable Timestep equal 1.0  #unit ps
+variable fixrate equal 1e-12  #1e-12 per ps
+variable this_dt equal 0.00025 #unit ps
+variable maxstrain equal 5e-4 #unit per kmcstep, max strain between two KMC steps
+
+variable      zmin    equal 0.0
+variable      zmax    equal 87.106
+variable      zfix    equal 25.0  #there are 15 angstrom vacuum 
+variable      rz1     equal ${zmin}+${zfix}
+variable      rz2     equal ${zmax}-${zfix}
+variable      ylength equal 28.553
+
+variable maxdisp equal ${maxstrain}*${ylength} #unit angstrom max displacement 
+
+## temperatures for fix nvt 
+variable tstart equal 300.0
+variable tfinal equal 300.0
+variable tstep equal 100.0*${this_dt}
+
+### the strain rate in fix deform is percentage per this_dt
+### Reaching the target shear displacement in 100 step
+#variable nsteps equal 100
+### Applying shear strain on atoms with box fixed
+### X = X0+V*delta_time
+#variable erate equal ${Timestep}*${fixrate}*${ylength}/${this_dt}/${nsteps}
+#variable maxrate equal ${maxdisp}/${this_dt}/${nsteps}
+
+### Applying shear strain with fix deform command
+###
+#variable velv equal ${Timestep}*${fixrate}/${this_dt}/${nsteps}
+#variable maxvel equal ${maxdisp}/${this_dt}/${nsteps}
+#if ${velv}>${maxvel} then "variable velv equal ${maxvel}"
+# 
+###Applying shear strain with change_box command
+###The unit is angstrom
+variable nsteps equal 100
+variable erate equal ${Timestep}*${fixrate}*${ylength}
+variable maxrate equal ${maxdisp}
+if ${erate}>${maxrate} then "variable erate equal ${maxrate}"
+
+### compute stress of top and bottom layers right close to the fixed layers ##
+### layer separation is 2.8553/2 ###
+variable      zlatt  equal 1.6
+variable      rzs1   equal ${rz1}+${zlatt}
+variable      rzs2   equal ${rz2}-${zlatt}
+
+units         metal
+dimension     3
+atom_style    molecular
+atom_modify   map array
+boundary      p  p  p
+
+pair_style    eam/fs
+read_data     tmp0.dat
+pair_coeff    *  * Fe-P.eam.fs Fe
+
+### top and bottom fixed layers
+region       rfix1 block INF INF INF INF INF ${rz1}
+region       rfix2 block INF INF INF INF ${rz2} INF
+group        gfix1 region rfix1
+group        gfix2 region rfix2
+group        gfix union gfix1 gfix2
+group        gactive subtract all gfix
+
+### top and bottom layers for stress calculation
+region       r1 block INF INF INF INF INF ${rzs1}
+group        g1 region r1
+group        gz1 intersect g1 gactive
+region       r1 delete
+group        g1 delete
+
+region       r1 block INF INF INF INF ${rzs2} INF
+group        g1 region r1
+group        gz2 intersect g1 gactive
+region       r1 delete
+group        g1 delete
+
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+timestep     ${this_dt}
+
+compute     pe  all pe
+compute     ke  all ke
+
+compute     sz1 gz1 stress/atom NULL
+compute     sz11 gz1 reduce ave c_sz1[1]
+compute     sz12 gz1 reduce ave c_sz1[2]
+compute     sz13 gz1 reduce ave c_sz1[3]
+compute     sz14 gz1 reduce ave c_sz1[4]
+compute     sz15 gz1 reduce ave c_sz1[5]
+compute     sz16 gz1 reduce ave c_sz1[6]
+
+compute     sz2 gz2 stress/atom NULL
+compute     sz21 gz2 reduce ave c_sz2[1]
+compute     sz22 gz2 reduce ave c_sz2[2]
+compute     sz23 gz2 reduce ave c_sz2[3]
+compute     sz24 gz2 reduce ave c_sz2[4]
+compute     sz25 gz2 reduce ave c_sz2[5]
+compute     sz26 gz2 reduce ave c_sz2[6]
+
+thermo_style custom step temp pe etotal
+thermo 100
+
+### fixed atoms on the top and bottom
+fix  ffix gfix setforce 0.0 0.0 0.0
+
+minimize     0.0 1.0e-6 1000   10000
+
+### dump stress calculations to "Runner_0" folder ###
+dump  dgz1    gz1 custom 100 Runner_0/stress_zbot.dump id x y z c_sz1[*]
+dump  dgz2    gz2 custom 100 Runner_0/stress_ztop.dump id x y z c_sz2[*]
+
+###applying displacements on atoms without change of box####
+#unfix  ffix
+#fix disptop gfix2 move linear 0.0 ${erate} 0.0 units box
+#fix  ffixbot gfix1 setforce 0.0 0.0 0.0
+#fix fixnvt gactive nvt temp ${tstart} ${tfinal} ${tstep}
+#run ${nsteps}
+#unfix disptop
+
+###applying shear strain on box
+#velocity gactive create ${tstart} 12345 dist uniform
+#fix deformbox all deform 1 yz vel ${velv} remap x
+#fix fixnvt gactive nvt temp ${tstart} ${tfinal} ${tstep}
+#run ${nsteps}
+#unfix deformbox
+
+###applying shear strain on box
+change_box all yz delta ${erate} remap units box
+### fix nvt
+velocity gactive create ${tstart} 12345 dist uniform
+fix fixnvt gactive nvt temp ${tstart} ${tfinal} ${tstep}
+run ${nsteps}
+
+### energy minimization
+minimize     0.0 1.0e-6 1000   10000
+
+###writing the data for next KMC step
+fix nve all nve
+run 0
+write_data  tmp1.dat

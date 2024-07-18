@@ -1,0 +1,3 @@
+,idav,idsps,type,iters,ntrans,emax,barrier,prefactor,ebias,dtot,dmag,dmax,dsum,adsum,nad,dtotfs,dmagfs,dmaxfs,dsumfs,adsumfs,nadfs,dtotfi,dmagfi,dmaxfi,dsumfi,adsumfi,nadfi,isConnect,reason
+0,0,8,9,1439,239,18.459,0.646,1.0,0.553,2.831,0.863,0.805,0.569,2.638,18,1.373,0.396,0.358,0.44,1.314,12,3.195,1.213,1.162,1.008,3.011,10,1,DupAV
+1,0,9,10,1058,192,14.075,0.646,1.0,0.553,2.832,0.863,0.804,0.569,2.639,18,1.374,0.396,0.358,0.44,1.314,12,3.195,1.213,1.162,1.008,3.011,10,1,DupAV

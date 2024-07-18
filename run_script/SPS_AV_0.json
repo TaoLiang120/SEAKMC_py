@@ -1,0 +1,1 @@
+[{"Selection": "All", "Operation": "translate", "Values": [0.0, 0.0, 0.2]}, {"Selection": ["type", "x"], "Range": [[1, 1],[0.0, 5.0]], "Operation": "rotation", "Values": [5.0, 0.0, 0.0]}]
