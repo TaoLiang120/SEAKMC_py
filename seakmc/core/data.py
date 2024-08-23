@@ -2300,9 +2300,9 @@ class ActiveVolume(SeakmcData, MSONable):
         if isinstance(coords, np.ndarray):
             coords = coords.astype(float)
             n = coords.shape[1]
-            self.atoms.loc[:n, 'x'][0:n] = coords[0]
-            self.atoms.loc[:n, 'y'][0:n] = coords[1]
-            self.atoms.loc[:n, 'z'][0:n] = coords[2]
+            self.atoms.loc[:n, 'x'] = coords[0]
+            self.atoms.loc[:n, 'y'] = coords[1]
+            self.atoms.loc[:n, 'z'] = coords[2]
         else:
             pass
 
