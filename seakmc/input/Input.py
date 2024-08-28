@@ -92,7 +92,11 @@ def get_avg_bond_length(sp1, sp2):
             n += 1
         return bls / max(n, 1)
     except:
-        return sp1.atomic_radius + sp2.atomic_radius
+        r1 = sp1.atomic_radius
+        r2 = sp2.atomic_radius
+        if r1 is None: r1 = 2.0
+        if r2 is None: r2 = 2.0
+        return r1 + r2
 
 
 def get_bo_one_length(sp1, sp2):
@@ -102,7 +106,11 @@ def get_bo_one_length(sp1, sp2):
         all_lengths = obtain_all_bond_lengths(sp1, sp2)
         return all_lengths["1"]
     except:
-        return sp1.atomic_radius + sp2.atomic_radius
+        r1 = sp1.atomic_radius
+        r2 = sp2.atomic_radius
+        if r1 is None: r1 = 2.0
+        if r2 is None: r2 = 2.0
+        return r1 + r2
 
 
 class Settings:
