@@ -240,7 +240,9 @@ class PyLammpsRunner(object):
         else:
             if isinstance(self.sett.potential["pair_coeff"], str):
                 lines.append("pair_coeff    %s" % (self.sett.potential["pair_coeff"]))
-
+            elif isinstance(self.sett.potential["pair_coeff"], list):
+                for line in self.sett.potential["pair_coeff"]:
+                    lines.append("pair_coeff    %s" % (line))
             elif isinstance(self.sett.potential["FileName"], str):
                 f = os.path.join(self.path_to_pot, self.sett.potential["FileName"])
                 line = "pair_coeff    *  *  " + f + "  " + se
