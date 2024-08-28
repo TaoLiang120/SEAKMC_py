@@ -301,6 +301,8 @@ class Settings:
                 if "LAMMPS" in thisfeval["Style"].upper():
                     if isinstance(potential["pair_coeff"], str):
                         pass
+                    elif isinstance(potential["pair_coeff"], list):
+                        pass
                     else:
                         raise ValueError("Potential input must contain a FileName or pair_coeff.")
                 else:
