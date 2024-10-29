@@ -42,7 +42,11 @@ def update_df_delete_SPs(df_delete_SPs, df_delete_this, DFWriter):
         idstart = len(df_delete_SPs)
         DFWriter.write_deleted_SPs(df_delete_this, idstart=idstart, mode='a')
         if len(df_delete_this) > 0:
-            df_delete_SPs = pd.concat([df_delete_SPs, df_delete_this], ignore_index=True)
+            if len(df_delete_SPs) == 0:
+                df_delete_SPs = df_delete_this.copy(deep=True)
+                df_delete_SPs = df_delete_SPs.reset_index(drop=True)
+            else:
+                df_delete_SPs = pd.concat([df_delete_SPs, df_delete_this], ignore_index=True)
     return df_delete_SPs
 
 
