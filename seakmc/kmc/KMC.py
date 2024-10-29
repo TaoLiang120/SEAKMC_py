@@ -551,7 +551,11 @@ class DataKMC:
         df_SPs = pd.DataFrame(columns=SP_DATA_HEADER)
         for i in range(len(DataSPs.df_SPs)):
             if len(DataSPs.df_SPs[i]) > 0:
-                df_SPs = pd.concat([df_SPs, DataSPs.df_SPs[i]], ignore_index=True)
+                if len(df_SPs) == 0:
+                    df_SPs = DataSPs.df_SPs[i].copy(deep=True)
+                    df_SPs = df_SPs.reset_index(drop=True)
+                else:
+                    df_SPs = pd.concat([df_SPs, DataSPs.df_SPs[i]], ignore_index=True)
         idavs = df_SPs["idav"].to_numpy().astype(int)
         barriers = df_SPs["barrier"].to_numpy()
         prefactors = df_SPs["prefactor"].to_numpy()
