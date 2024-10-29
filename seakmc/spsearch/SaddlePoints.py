@@ -1283,7 +1283,11 @@ def check_duplicate_avSPs(avSPs, de_neighbors, AVitags, SPsett):
                         for ii in sorted(todel, reverse=True):
                             del avSPs[i].SPlist[ii]
                         avSPs[i].nSP = len(avSPs[i].SPlist)
-                        df_delete_this = pd.concat([df_delete_this, df_tmp], ignore_index=True)
+                        if len(df_delete_this) == 0:
+                            df_delete_this = df_tmp.copy(deep=True)
+                            df_delete_this = df_delete_this.reset_index(drop=True)
+                        else:
+                            df_delete_this = pd.concat([df_delete_this, df_tmp], ignore_index=True)
 
     return avSPs, df_delete_this
 
@@ -1434,7 +1438,11 @@ class Data_SPs:
                     df_tmp = thisAVSP.to_dataframe(iSPs=todel)
                     reasons = ["Dup"] * len(df_tmp)
                     df_tmp = thisAVSP.insert_reason_df(df_tmp, reasons)
-                    df_delete_this = pd.concat([df_delete_this, df_tmp], ignore_index=True)
+                    if len(df_delete_this) == 0:
+                        df_delete_this = df_tmp.copy(deep=True)
+                        df_delete_this = df_delete_this.reset_index(drop=True)
+                    else:
+                        df_delete_this = pd.concat([df_delete_this, df_tmp], ignore_index=True)
                     for i in sorted(todel, reverse=True):
                         del thisAVSP.SPlist[i]
                     thisAVSP.nSP = len(thisAVSP.SPlist)
@@ -1445,7 +1453,12 @@ class Data_SPs:
         df_delete_this = pd.DataFrame(columns=SP_COMPACT_HEADER4Delete)
         for thisAVSP in thisAVSPs:
             thisAVSP, df_tmp = self.check_dup_avSP(idav, thisAVSP, de_neighbors, AVitags, SPsett)
-            df_delete_this = pd.concat([df_delete_this, df_tmp], ignore_index=True)
+            if len(df_tmp) > 0:
+                if len(df_delete_this) == 0:
+                    df_delete_this = df_tmp.copy(deep=True)
+                    df_delete_this = df_delete_this.reset_index(drop=True)
+                else:
+                    df_delete_this = pd.concat([df_delete_this, df_tmp], ignore_index=True)
         return df_delete_this
 
     def reorganization(self, to_delete_localisp):
