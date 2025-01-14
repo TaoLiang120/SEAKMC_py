@@ -245,7 +245,7 @@ class LammpsRunner(object):
 
         if os.path.isfile(self.relative_path + "/" + self.input_file):
             os.remove(self.relative_path + "/" + self.input_file)
-        with zopen(self.relative_path + "/" + self.input_file, "wt") as f:
+        with zopen(self.relative_path + "/" + self.input_file, "wt", encoding="utf-8") as f:
             f.write("\n".join(rinputs) + "\n")
 
     def get_default_inputs(self, purpose, data, thiscolor, nactive):
