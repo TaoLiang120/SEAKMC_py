@@ -138,7 +138,7 @@ class DFWriter(object):
 
             if mode[0:1].upper() == "A":
                 if len(lines) > 0:
-                    with zopen(filename, "a", encoding="utf-8") as f:
+                    with zopen(filename, "at", encoding="utf-8") as f:
                         f.write("\n".join(lines) + "\n")
             elif mode[0:1].upper() == "W":
                 if len(lines) > 0:
