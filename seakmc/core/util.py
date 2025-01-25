@@ -122,35 +122,33 @@ def sigmoid_function(x, scaling=1.0):
 
 
 def to_half_matrix(a):
-    a1 = a[0][0]
-    a2 = a[1][0]
-    a3 = a[2][0]
-    b1 = a[0][1]
-    b2 = a[1][1]
-    b3 = a[2][1]
-    c1 = a[0][2]
-    c2 = a[1][2]
-    c3 = a[2][2]
-    aaa = np.sqrt(a1 ** 2 + a2 ** 2 + a3 ** 2)
-    bbb = np.sqrt(b1 ** 2 + b2 ** 2 + b3 ** 2)
-    ccc = np.sqrt(c1 ** 2 + c2 ** 2 + c3 ** 2)
-    alpha = (b1 * c1 + b2 * c2 + b3 * c3) / bbb / ccc
-    beta = (a1 * c1 + a2 * c2 + a3 * c3) / ccc / aaa
-    gamma = (b1 * a1 + b2 * a2 + b3 * a3) / bbb / aaa
-    lxx = aaa
-    lxy = bbb * gamma
-    lxz = ccc * beta
-    lyy = np.sqrt(bbb * bbb - lxy * lxy)
-    lyz = (bbb * ccc * alpha - lxy * lxz) / lyy
-    lzz = np.sqrt(ccc * ccc - lxz * lxz - lyz * lyz)
-    b = np.array([3, 3], dtype=float)
-    b[0][0] = lxx
-    b[1][0] = 0.0
-    b[2][0] = 0.0
-    b[0][1] = lxy
-    b[1][1] = lyy
-    b[2][1] = 0.0
-    b[0][2] = lxz
-    b[1][2] = lyz
-    b[2][2] = lzz
+    a1=a[0][0]
+    a2=a[0][1]
+    a3=a[0][2]
+    b1=a[1][0]
+    b2=a[1][1]
+    b3=a[1][2]
+    c1=a[2][0]
+    c2=a[2][1]
+    c3=a[2][2]
+    aaa = np.sqrt(a1**2+a2**2+a3**2)
+    bbb = np.sqrt(b1**2+b2**2+b3**2)
+    ccc = np.sqrt(c1**2+c2**2+c3**2)
+    alpha = (b1*c1+b2*c2+b3*c3)/bbb/ccc
+    beta = (a1*c1+a2*c2+a3*c3)/ccc/aaa
+    gamma = (b1*a1+b2*a2+b3*a3)/bbb/aaa
+    lxx=aaa
+    lxy=bbb*gamma
+    lxz=ccc*beta
+    lyy=np.sqrt(bbb*bbb-lxy*lxy)
+    lyz=(bbb*ccc*alpha-lxy*lxz)/lyy
+    lzz=np.sqrt(ccc*ccc-lxz*lxz-lyz*lyz)
+    b = np.zeros([3,3],dtype=float)
+    b[0][0]=lxx
+    b[1][0]=lxy
+    b[1][1]=lyy
+    b[2][0]=lxz
+    b[2][1]=lyz
+    b[2][2]=lzz
     return b
+
