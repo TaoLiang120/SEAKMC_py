@@ -1,27 +1,27 @@
 # coding: utf-8
 # Copyright (c) SEAKMC Team.
 # Distributed under the terms of the MIT License
-import os, warnings
+
+import os
+import warnings
 import numpy as np
+from numpy import pi
 import pandas as pd
 import copy
-from numpy import pi
 from typing import Optional, Tuple
 from monty.json import MSONable
 
+from pymatgen.core.periodic_table import Element
+from pymatgen.core.lattice import Lattice
+from pymatgen.core.structure import Molecule, Structure
+from pymatgen.io.lammps.data import ATOMS_HEADERS, LammpsBox, lattice_2_lmpbox, LammpsData
 from pymatgen.symmetry.analyzer import (
     PointGroupAnalyzer,
-    SpacegroupAnalyzer,
 )
-
-from pymatgen.io.lammps.data import ATOMS_HEADERS
-from pymatgen.io.lammps.data import LammpsBox, LammpsData
-from pymatgen.core.periodic_table import Element
-from pymatgen.core.structure import Molecule, Structure
 
 from seakmc.input.Input import Global_Variables
 from seakmc.core.util import mat_lengths, mat_angles, mat_mag, generate_rotation_matrix
-from seakmc.core.util import to_half_matrix
+
 
 __author__ = "Tao Liang"
 __copyright__ = "Copyright 2021"
@@ -2008,29 +2008,16 @@ class SeakmcData(LammpsData, MSONable):
         elif Operation[0:3].upper() == "TRA":
             transvec = np.array([Values[0], Values[1], Values[2]])
         if transvec is not None:
-            self.box.bounds[0][1] += transvec[0]
-            self.box.bounds[1][1] += transvec[1]
-            self.box.bounds[2][1] += transvec[2]
+            newbox = copy.deepcopy(self.box)
+            newbox.bounds[0][1] += transvec[0]
+            newbox.bounds[1][1] += transvec[1]
+            newbox.bounds[2][1] += transvec[2]
         if rotmat is not None:
-            if self.box.tilt is None: self.box.tilt = np.array([0, 0, 0])
-            box1 = np.array([self.box.bounds[0][1] - self.box.bounds[0][0], 0, 0])
-            box1 = np.dot(rotmat.T, box1)
-            box2 = np.array([self.box.tilt[0], self.box.bounds[1][1] - self.box.bounds[1][0], 0])
-            box2 = np.dot(rotmat.T, box2)
-            box3 = np.array([self.box.tilt[1], self.box.tilt[2], self.box.bounds[1][1] - self.box.bounds[1][0]])
-            box3 = np.dot(rotmat.T, box3)
-            newbox = np.vstack([box1, box2, box3])
-            newbox = to_half_matrix(newbox)
-            self.box.bounds[0][0] = 0
-            self.box.bounds[0][1] = newbox[0][0]
-            self.box.bounds[1][0] = 0
-            self.box.bounds[1][1] = newbox[1][1]
-            self.box.bounds[2][0] = 0
-            self.box.bounds[2][1] = newbox[2][2]
-            self.box.tilt[0] = newbox[1][0]
-            self.box.tilt[1] = newbox[2][0]
-            self.box.tilt[2] = newbox[2][1]
-        self.box = SeakmcBox(self.box.bounds, self.box.tilt)
+            m = copy.deepcopy(self.box.matrix)
+            for i in range(3):
+                m[i] = np.dot(rotmat.T, m[i])
+            newbox, symops = lattice_2_lmpbox(Lattice(m))
+        self.box = SeakmcBox(newbox.bounds, newbox.tilt)
 
     def chop_data(self, xlim=[0.25, 0.75], ylim=[0.25, 0.75], zlim=[0.25, 0.75], Fractional=True):
         if Fractional:
