@@ -77,10 +77,12 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
             AVitags = thisRestart.AVitags
             df_delete_SPs = thisRestart.df_delete_SPs
 
-            thisdf = pd.DataFrame(columns=SP_DATA_HEADER)
+            thisdf = pd.DataFrame()
             for i in range(len(DataSPs.df_SPs)):
                 if len(DataSPs.df_SPs[i]) > 0:
                     thisdf = pd.concat([thisdf, DataSPs.df_SPs[i]], ignore_index=True)
+            if len(thisdf) == 0:
+                thisdf = pd.DataFrame(columns=SP_DATA_HEADER)
             DFWriter.write_SPs(thisdf, idstart=0, mode="w")
             DFWriter.write_deleted_SPs(df_delete_SPs, idstart=0, mode="w")
 
