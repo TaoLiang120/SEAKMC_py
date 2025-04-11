@@ -588,114 +588,118 @@ class SeakmcData(LammpsData, MSONable):
             ind0s = np.compress(idmols >= 0, ind0s, axis=0)
         else:
             ind0s = np.arange(self.natoms, dtype=int)
+        nind0s = len(ind0s)
+        if nind0s == 0:
+            defect_list = []
+            dCN_list = []
+        else:
+            atoms_ghost_array = self.atoms_to_array(self.atoms_ghost, OutIndex=True)
 
-        atoms_ghost_array = self.atoms_to_array(self.atoms_ghost, OutIndex=True)
+            ntotcell = self.cell_dim_ghost[0] * self.cell_dim_ghost[1] * self.cell_dim_ghost[2]
+            grouped_atoms, group_info, atomdtype = self.group_atoms_by("idc", atoms_ghost_array)
 
-        ntotcell = self.cell_dim_ghost[0] * self.cell_dim_ghost[1] * self.cell_dim_ghost[2]
-        grouped_atoms, group_info, atomdtype = self.group_atoms_by("idc", atoms_ghost_array)
+            DCut4Def = self.sett.active_volume['FindDefects']['DCut4Def']
+            idc_reverse = np.array([-1] * ntotcell, dtype=int)
+            for i in range(len(group_info[0])):
+                idc_reverse[group_info[0][i]] = i
 
-        DCut4Def = self.sett.active_volume['FindDefects']['DCut4Def']
-        idc_reverse = np.array([-1] * ntotcell, dtype=int)
-        for i in range(len(group_info[0])):
-            idc_reverse[group_info[0][i]] = i
+            defect_list = []
+            dCN_list = []
+            for inr in range(len(ind0s)):
+                nr = ind0s[inr]
+                isdefect = False
+                defecttype = None
+                thisidmol = self.atoms.iloc[nr]["molecule-ID"]
+                thisdCN = 0
+                ismolid = True
+                if thisidmol < 0:
+                    ismolid = False
+                else:
+                    if isinstance(self.sett.active_volume["FindDefects"]["MolIDCap"], int):
+                        if thisidmol >= self.sett.active_volume["FindDefects"]["MolIDCap"]:
+                            ismolid = False
+                if ismolid:
+                    thiscoords = np.array(
+                        [self.atoms.iloc[nr]["xsn"], self.atoms.iloc[nr]["ysn"], self.atoms.iloc[nr]["zsn"]])
+                    thistype = int(self.atoms.iloc[nr]["type"]) - 1
 
-        defect_list = []
-        dCN_list = []
-        for inr in range(len(ind0s)):
-            nr = ind0s[inr]
-            isdefect = False
-            defecttype = None
-            thisidmol = self.atoms.iloc[nr]["molecule-ID"]
-            thisdCN = 0
-            ismolid = True
-            if thisidmol < 0:
-                ismolid = False
-            else:
-                if isinstance(self.sett.active_volume["FindDefects"]["MolIDCap"], int):
-                    if thisidmol >= self.sett.active_volume["FindDefects"]["MolIDCap"]:
-                        ismolid = False
-            if ismolid:
-                thiscoords = np.array(
-                    [self.atoms.iloc[nr]["xsn"], self.atoms.iloc[nr]["ysn"], self.atoms.iloc[nr]["zsn"]])
-                thistype = int(self.atoms.iloc[nr]["type"]) - 1
+                    if 'Q' in method:
+                        qtype = self.sett.potential['charges'][thistype]
+                        try:
+                            thisq = self.atoms.iloc[nr]["q"]
+                            if abs(thisq - qtype) >= self.sett.potential['qtolerances'][thistype]: isdefect = True
+                        except:
+                            pass
 
-                if 'Q' in method:
-                    qtype = self.sett.potential['charges'][thistype]
-                    try:
-                        thisq = self.atoms.iloc[nr]["q"]
-                        if abs(thisq - qtype) >= self.sett.potential['qtolerances'][thistype]: isdefect = True
-                    except:
-                        pass
+                    if not isdefect:
+                        if 'CN' in method or 'BL' in method:
+                            thisatoms = self.get_cell_atoms(nr, thiscoords, idc_reverse, grouped_atoms, atomdtype,
+                                                            Self_Excluded=True, isHalf=False)
+                            inds = np.array(thisatoms["itag"], dtype=int)
+                            xyzs = np.vstack((thisatoms["xsn"], thisatoms["ysn"], thisatoms["zsn"]))
+                            types = np.array(thisatoms["type"], dtype=int)
 
-                if not isdefect:
-                    if 'CN' in method or 'BL' in method:
-                        thisatoms = self.get_cell_atoms(nr, thiscoords, idc_reverse, grouped_atoms, atomdtype,
-                                                        Self_Excluded=True, isHalf=False)
-                        inds = np.array(thisatoms["itag"], dtype=int)
-                        xyzs = np.vstack((thisatoms["xsn"], thisatoms["ysn"], thisatoms["zsn"]))
-                        types = np.array(thisatoms["type"], dtype=int)
-
-                        if inds.shape[0] <= 0:
-                            isdefect = True
-                        else:
-                            #thisxyznsq = np.sum((xyzs.T - thiscoords)**2, axis = 1)
-                            thisxyznsq = np.sum(np.dot((xyzs.T - thiscoords), self.box.matrix) ** 2, axis=1)
-                            inds = np.compress(thisxyznsq < cutdefectmaxsq, inds, axis=0)
-                            types = np.compress(thisxyznsq < cutdefectmaxsq, types, axis=0)
-                            thisxyznsq = np.compress(thisxyznsq < cutdefectmaxsq, thisxyznsq, axis=0)
-                            types = types - 1
-                            masks = np.zeros(inds.shape, dtype=bool)
-                            for j in range(inds.shape[0]):
-                                thiscut = self.sett.potential['cutneighs'][thistype][types[j]]
-                                thiscutsq = thiscut * thiscut
-                                if thisxyznsq[j] < thiscutsq: masks[j] = True
-
-                            thisxyznsq = thisxyznsq[masks]
-                            types = types[masks]
-                            inds = inds[masks]
-
-                            cntype = self.sett.potential['coordnums'][thistype]
-                            thisdCN = inds.shape[0] - cntype
-                            if self.sett.active_volume["FindDefects"]["DiscardType"][
-                               0:2].upper() == "UN" and thisdCN < 0:
+                            if inds.shape[0] <= 0:
                                 isdefect = True
-                            elif self.sett.active_volume["FindDefects"]["DiscardType"][
-                                 0:2].upper() == "OV" and thisdCN > 0:
-                                isdefect = True
-                            if not isdefect:
-                                if 'CN' in method:
-                                    if inds.shape[0] - cntype > 0.5:
-                                        isdefect = True
-                                    elif inds.shape[0] - cntype < -0.5:
-                                        isdefect = True
+                            else:
+                                # thisxyznsq = np.sum((xyzs.T - thiscoords)**2, axis = 1)
+                                thisxyznsq = np.sum(np.dot((xyzs.T - thiscoords), self.box.matrix) ** 2, axis=1)
+                                inds = np.compress(thisxyznsq < cutdefectmaxsq, inds, axis=0)
+                                types = np.compress(thisxyznsq < cutdefectmaxsq, types, axis=0)
+                                thisxyznsq = np.compress(thisxyznsq < cutdefectmaxsq, thisxyznsq, axis=0)
+                                types = types - 1
+                                masks = np.zeros(inds.shape, dtype=bool)
+                                for j in range(inds.shape[0]):
+                                    thiscut = self.sett.potential['cutneighs'][thistype][types[j]]
+                                    thiscutsq = thiscut * thiscut
+                                    if thisxyznsq[j] < thiscutsq: masks[j] = True
 
-                                    if not isdefect:
-                                        if 'BL' in method:
-                                            thisscale = (1.0 - 0.2 * (cntype - inds.shape[0]) / cntype)
-                                            thisscale = min(thisscale, 1.2)
-                                            thisscale = max(thisscale, 0.8)
-                                            for j in range(inds.shape[0]):
-                                                bl = self.sett.potential['bondlengths'][thistype][types[j]] * thisscale
-                                                if thisxyznsq[j] < bl * bl * (1.0 - DCut4Def) * (1.0 - DCut4Def):
-                                                    isdefect = True
-                                                    break
-                                                if thisxyznsq[j] > bl * bl * (1.0 + DCut4Def) * (1.0 + DCut4Def):
-                                                    isdefect = True
-                                                    break
-                                else:
-                                    thisscale = 1.0
-                                    for j in range(inds.shape[0]):
-                                        bl = self.sett.potential['bondlengths'][thistype][types[j]] * thisscale
-                                        if thisxyznsq[j] < bl * bl * (1.0 - DCut4Def) * (1.0 - DCut4Def):
-                                            isdefect = True
-                                            break
-                                        if thisxyznsq[j] > bl * bl * (1.0 + DCut4Def) * (1.0 + DCut4Def):
-                                            isdefect = True
-                                            break
-            if isdefect:
-                defect_list.append(atoms_ghost_array[nr])
-                dCN_list.append(thisdCN)
+                                thisxyznsq = thisxyznsq[masks]
+                                types = types[masks]
+                                inds = inds[masks]
 
+                                cntype = self.sett.potential['coordnums'][thistype]
+                                thisdCN = inds.shape[0] - cntype
+                                if self.sett.active_volume["FindDefects"]["DiscardType"][
+                                   0:2].upper() == "UN" and thisdCN < 0:
+                                    isdefect = True
+                                elif self.sett.active_volume["FindDefects"]["DiscardType"][
+                                     0:2].upper() == "OV" and thisdCN > 0:
+                                    isdefect = True
+                                if not isdefect:
+                                    if 'CN' in method:
+                                        if inds.shape[0] - cntype > 0.5:
+                                            isdefect = True
+                                        elif inds.shape[0] - cntype < -0.5:
+                                            isdefect = True
+
+                                        if not isdefect:
+                                            if 'BL' in method:
+                                                thisscale = (1.0 - 0.2 * (cntype - inds.shape[0]) / cntype)
+                                                thisscale = min(thisscale, 1.2)
+                                                thisscale = max(thisscale, 0.8)
+                                                for j in range(inds.shape[0]):
+                                                    bl = self.sett.potential['bondlengths'][thistype][
+                                                             types[j]] * thisscale
+                                                    if thisxyznsq[j] < bl * bl * (1.0 - DCut4Def) * (1.0 - DCut4Def):
+                                                        isdefect = True
+                                                        break
+                                                    if thisxyznsq[j] > bl * bl * (1.0 + DCut4Def) * (1.0 + DCut4Def):
+                                                        isdefect = True
+                                                        break
+                                    else:
+                                        thisscale = 1.0
+                                        for j in range(inds.shape[0]):
+                                            bl = self.sett.potential['bondlengths'][thistype][types[j]] * thisscale
+                                            if thisxyznsq[j] < bl * bl * (1.0 - DCut4Def) * (1.0 - DCut4Def):
+                                                isdefect = True
+                                                break
+                                            if thisxyznsq[j] > bl * bl * (1.0 + DCut4Def) * (1.0 + DCut4Def):
+                                                isdefect = True
+                                                break
+                if isdefect:
+                    defect_list.append(atoms_ghost_array[nr])
+                    dCN_list.append(thisdCN)
         return defect_list, dCN_list
 
     def WS_find_defects(self):
