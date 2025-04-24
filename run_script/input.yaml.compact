@@ -145,7 +145,7 @@ spsearch:
     HandleVN:
         CenterVN: False
         RescaleVN: True
-        RescaleValue: LOGVNRAS
+        RescaleValue: LOGN
         Ratio4Zero4LOGV: 0.2
         Ratio4Zero4RAS: 0.3
     Master_Slave: True
