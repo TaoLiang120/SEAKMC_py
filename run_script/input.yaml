@@ -301,7 +301,7 @@ spsearch:
         ResetVN04Preload: True
         RatioVN04Preload: 0.2
         RescaleVN: True
-        RescaleValue: LOGVNRAS
+        RescaleValue: LOGN
         Int4ComputeScale: 1
         TakeMin4MixedRescales: True
         RescaleStyle4LOGV: SIGMOID
