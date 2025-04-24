@@ -592,7 +592,7 @@ class Settings:
                       "IgnoreType": True}
         HandleVN = {"CheckAng4Init": True, "AngTol4Init": 5.0, "MaxIter4Init": 20, "NMaxRandVN": 20,
                     "CenterVN": False, "NSteps4CenterVN": 5, "IgnoreSteps": 4,
-                    "RescaleVN": True, "RescaleValue": "LOGVNRAS", "Int4ComputeScale": 1, "TakeMin4MixedRescales": True,
+                    "RescaleVN": True, "RescaleValue": "LOGN", "Int4ComputeScale": 1, "TakeMin4MixedRescales": True,
                     "RescaleStyle4LOGV": "SIGMOID", "Period4MA": 1, "XRange4LOGV": 20.0, "PowerOnV": 4,
                     "Ratio4Zero4LOGV": 0.2, "MinValue4LOGV": -20.0,
                     "RescaleStyle4RAS": "SIGMOID", "XRange4RAS": 40.0, "Ratio4Zero4RAS": 0.3,
