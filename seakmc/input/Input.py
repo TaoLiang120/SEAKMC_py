@@ -226,9 +226,9 @@ class Settings:
         thisdata["PBC"] = PBC
         #########################################################
         Relaxation = {"BoxRelax": False, "InitTemp4Opt": 0.0, "TargetTemp4NVT": 5.0, "NVTSteps4Opt": 10000}
-        thisfeval = {"Bin": "pylammps", "Path2Bin": False, "Style": "pylammps", "nproc": 1, "processors": False,
+        thisfeval = {"Bin": "pylammps", "Path2Bin": False, "Style": "pylammps", "nproc": "auto", "processors": False,
                      "partition": False, "Screen": False, "LogFile": False, "NSteps4Relax": 10000, "timestep": 0.002,
-                     "Master_Slave4ReCal": False, "RinputOpt": False, "RinputMD0": False,
+                     "Master_Slave4ReCal": False, "RinputOpt": False, "RinputMD0": False, "nproc4ReCal": "auto",
                      "ImportValue4RinputOpt": False, "Keys4ImportValue4RinputOpt": [["Timestep", "time_step"]],
                      "OutFileHeaders": [], "Relaxation": Relaxation}
 
@@ -261,6 +261,12 @@ class Settings:
                         del thisfeval["OutFileHeaders"][i]
         else:
             thisfeval["OutFileHeaders"] = []
+
+        if not isinstance(thisfeval["nproc"], int):
+            thisfeval["nproc"] = 1
+
+        if not isinstance(thisfeval["nproc4ReCal"], int):
+            thisfeval["nproc4ReCal"] = 1
 
         if thisfeval["Style"].lower() == "pylammps":
             thisfeval["Bin"] = "pylammps"
