@@ -27,8 +27,8 @@ potential:
 force_evaluator:
     Bin: pylammps
     Path2Bin: False
-    nproc: 1
-    nproc4ReCal: 1
+    nproc: auto
+    nproc4ReCal: auto
     RinputOpt: False
     OutFileHeaders:
        - None

@@ -42,7 +42,7 @@ force_evaluator:
     Style: pylammps
     Screen: False
     LogFile: False
-    nproc: 1
+    nproc: auto
     processors: False
     partition: False
     NSteps4Relax: 10000
@@ -54,7 +54,7 @@ force_evaluator:
        NVTSteps4Opt: 10000    
     RinputOpt: False
     RinputMD0: False
-    nproc4ReCal: 1
+    nproc4ReCal: auto
     OutFileHeader:
         - None
     ImportValue4RinputOpt: False
