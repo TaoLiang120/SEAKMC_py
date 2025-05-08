@@ -92,8 +92,8 @@ defect_bank:
     SaveDB: False
     Ratio4DispLoad: 0.8
     SortDisps: False
-    NMax4DB: 200
-    NMin4DB: 40
+    NMax4DB: 100
+    NMin4DB: 8
     IgnoreType: True
     Tol4Disp: 0.1
     FileHeader: DB
