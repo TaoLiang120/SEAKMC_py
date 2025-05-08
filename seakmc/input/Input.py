@@ -658,7 +658,7 @@ class Settings:
             for key in DynMat:
                 thisDynMat[key] = DynMat[key]
         #################################################################################
-        thisDefectBank = {"Preload": False, "NMax4DB": 200, "NMin4DB": 40,
+        thisDefectBank = {"Preload": False, "NMax4DB": 100, "NMin4DB": 8,
                           "Scaling": 1.0, "Ratio4DispLoad": 0.8, "IgnoreType": True, "Tol4Disp": 0.1,
                           "FileHeader": "DB", "LoadDB": False, "LoadPath": "DefectBank", "SortDisps": False,
                           "Recycle": False, "UseSymm": False, "SaveDB": False, "SavePath": "DefectBank",
