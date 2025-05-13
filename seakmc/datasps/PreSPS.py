@@ -240,7 +240,7 @@ def get_disps_from_spsearch(loadsett, thisAV, idav):
                 if loadsett["SortDisps"]:
                     fid = file.replace(thisfhead, "")
                     fid = fid.replace(".csv", "")
-                    fids.append(fid)
+                    fids.append(int(fid))
         if loadsett["SortDisps"] and len(disps) > 0:
             disps = np.array(disps)
             ai = np.argsort(fids)
