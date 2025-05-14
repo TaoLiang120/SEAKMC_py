@@ -27,9 +27,9 @@ SP_COMPACT_HEADER = ["idav", "idsps", "type", "iters", "ntrans", "emax", "barrie
 NENTRY_COMPACT_DISP = 6
 
 SP_COMPACT_HEADER4Delete = SP_COMPACT_HEADER + ["reason"]
-SP_DATA_HEADER = ["idav", "barrier", "prefactor", "ebias", "dmag", "dmax", "dsum", "adsum", "dmagfi", "dmaxfi",
+SP_DATA_HEADER = ["idav", "idsps", "barrier", "prefactor", "ebias", "dmag", "dmax", "dsum", "adsum", "dmagfi", "dmaxfi",
                   "dsumfi", "adsumfi", "isConnect"]
-SP_KMC_HEADER = ["idav", "barrier", "prefactor", "ebias", "dmag", "dmax", "dsum", "dsumr", "dmagfi", "dmaxfi",
+SP_KMC_HEADER = ["idav", "idsps", "barrier", "prefactor", "ebias", "dmag", "dmax", "dsum", "dsumr", "dmagfi", "dmaxfi",
                  "dsumfi", "dsumrfi", "isConnect", "probability", "isSel"]
 SP_KMC_SELECTED_HEADER = ["isp", "barrier", "prefactor", "ebias",
                           "dtot", "dmag", "dmax", "dsum", "adsum",
