@@ -557,6 +557,7 @@ class DataKMC:
                 else:
                     df_SPs = pd.concat([df_SPs, DataSPs.df_SPs[i]], ignore_index=True)
         idavs = df_SPs["idav"].to_numpy().astype(int)
+        idspss = df_SPs["idsps"].to_numpy().astype(int)
         barriers = df_SPs["barrier"].to_numpy()
         prefactors = df_SPs["prefactor"].to_numpy()
         biass = df_SPs["ebias"].to_numpy()
@@ -572,7 +573,7 @@ class DataKMC:
         isSels = np.zeros(len(barriers), dtype=int)
         isSels[np.array(self.isels, dtype=int)] = 1
 
-        marray = zip(idavs, barriers, prefactors, biass,
+        marray = zip(idavs, idspss, barriers, prefactors, biass,
                      dmags, dmaxs, dsums, rdsums,
                      fdmags, fdmaxs, fdsums, frdsums,
                      isConns, self.thisprobs, isSels)
