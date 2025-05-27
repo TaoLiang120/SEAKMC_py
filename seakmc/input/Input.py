@@ -594,7 +594,7 @@ class Settings:
 
         LocalRelax = {"LocalRelax": True, "InitTemp4Opt": 0.0, "TargetTemp4NVT": 5.0, "NVTSteps4Opt": 1000}
         Preloading = {"Preload": False, "LoadPath": False, "Ratio4DispLoad": 0.8, "SortDisps": False, "Method": "Files",
-                      "FileHeader": "SPS_AV_", "CheckSequence": False, "FileHeader4Data": "SPS_basin_",
+                      "FileHeader": "SPS_AV_", "CheckSequence": False, "FileHeader4Data": "SPS_basin_", "Scaling": 1.0,
                       "IgnoreType": True}
         HandleVN = {"CheckAng4Init": True, "AngTol4Init": 5.0, "MaxIter4Init": 20, "NMaxRandVN": 20,
                     "CenterVN": False, "NSteps4CenterVN": 5, "IgnoreSteps": 4,
