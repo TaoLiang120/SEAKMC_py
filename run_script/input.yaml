@@ -326,6 +326,7 @@ spsearch:
         Method: Files
         FileHeader: SPS_AV_
         Ratio4DispLoad: 0.8
+        Scaling: 1.0
         SortDisps: False
         CheckSequence: False
         FileHeader4Data: SPS_basin_
