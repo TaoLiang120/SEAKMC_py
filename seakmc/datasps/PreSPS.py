@@ -208,7 +208,7 @@ def get_disps_from_spsearch(loadsett, thisAV, idav):
                 for i in range(nn):
                     thisxyz = np.array([thisdf.at[thisdf.index[i], 'x'], thisdf.at[thisdf.index[i], 'y'],
                                         thisdf.at[thisdf.index[i], 'z']])
-                    thisd = coords - thisxyz.reshape([3, 1])
+                    thisd = coords - thisxyz.reshape([3, 1]) * loadsett["Scaling"]
                     thisdsq = np.sum(thisd * thisd, axis=0)
                     ai = np.argmin(thisdsq, axis=0)
                     aiatoms[i] = ai
@@ -232,7 +232,7 @@ def get_disps_from_spsearch(loadsett, thisAV, idav):
                 thisdf = pd.read_csv(os.path.join(thispath, file))
                 #thisdf = thisdf.truncate(after = thisdf.index[min(thisna,len(thisdf))-1])
                 thisdisps = np.vstack((thisdf["dx"].to_numpy(), thisdf["dy"].to_numpy(), thisdf["dz"].to_numpy())) * \
-                            loadsett["Ratio4DispLoad"]
+                            loadsett["Ratio4DispLoad"] * loadsett["Scaling"]
                 if aiatoms is not None:
                     #aiatoms = np.compress(aiatoms<thisdisps.shape[1], aiatoms)
                     thisdisps = thisdisps[:, aiatoms]
