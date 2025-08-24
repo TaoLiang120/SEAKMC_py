@@ -850,6 +850,22 @@ class Dimer(SPSearch):
             ncols = len(summary_cols)
 
         while not self.DI_CON:
+            if self.sett.spsearch["ShowIterationResults"]:
+                if self.NTSITR % self.sett.spsearch["Inteval4ShowIterationResults"] == 0:
+                    summary_array = np.append(summary_array, [int(self.iter), int(self.NTSITR), round(self.ROCURV, 3),
+                                                              round(self.EDIFF, 3), round(self.EDIFF_MAX, 3)])
+                    if self.sett.spsearch["ShowVN4ShowIterationResults"]:
+                        df = pd.DataFrame(self.VN.T, columns=["x", "y", "z"])
+                        filename = thisdir + "/VectorN_" + str(self.NTSITR) + "_" + str(self.iter) + ".csv"
+                        #filename = thisdir+"/instant_displacements_" + str(self.iter)+".csv"
+                        df.to_csv(filename)
+                    if self.sett.spsearch["ShowCoords4ShowIterationResults"]:
+                        df = pd.DataFrame(self.XCR.T, columns=["x", "y", "z"])
+                        filename = thisdir + "/Coords_" + str(self.NTSITR) + "_" + str(self.iter) + ".csv"
+                        #filename = thisdir+"/total_displacements_" + str(self.iter)+".csv"
+                        df.to_csv(filename)
+                    #if self.isRescale: np.savetxt(thisdir+"/RescaleFinal_"+str(self.iter)+".dat", self.Rescale)
+
             self.dimer_force()
             if self.iter == 0:
                 self.ENINIT = self.ENCALC
@@ -906,23 +922,6 @@ class Dimer(SPSearch):
                 print(f"FTOTAL: {ftotal} EDIFF:{self.EDIFF} EDIFF_MAX: {self.EDIFF_MAX}")
                 print("+++++++++++++++++++++++++++")
             '''
-
-            if self.sett.spsearch["ShowIterationResults"]:
-                if self.NTSITR % self.sett.spsearch["Inteval4ShowIterationResults"] == 0:
-                    summary_array = np.append(summary_array, [int(self.iter), int(self.NTSITR), round(self.ROCURV, 3),
-                                                              round(self.EDIFF, 3), round(self.EDIFF_MAX, 3)])
-                    if self.sett.spsearch["ShowVN4ShowIterationResults"]:
-                        df = pd.DataFrame(self.VN.T, columns=["x", "y", "z"])
-                        filename = thisdir + "/VectorN_" + str(self.NTSITR) + "_" + str(self.iter) + ".csv"
-                        #filename = thisdir+"/instant_displacements_" + str(self.iter)+".csv"
-                        df.to_csv(filename)
-                    if self.sett.spsearch["ShowCoords4ShowIterationResults"]:
-                        df = pd.DataFrame(self.XCR.T, columns=["x", "y", "z"])
-                        filename = thisdir + "/Coords_" + str(self.NTSITR) + "_" + str(self.iter) + ".csv"
-                        #filename = thisdir+"/total_displacements_" + str(self.iter)+".csv"
-                        df.to_csv(filename)
-                    #if self.isRescale: np.savetxt(thisdir+"/RescaleFinal_"+str(self.iter)+".dat", self.Rescale)
-
             self.iter += 1
         self.BARR += self.ENCALC - self.ENINIT
         self.ENLAST = self.ENCALC
