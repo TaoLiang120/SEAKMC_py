@@ -429,7 +429,7 @@ class Dimer(SPSearch):
         self.TRGAMN = 0.0
         self.TRCURV = 0.0
         self.NROITR = 0
-        self.NTSITR = 1
+        self.NTSITR = 0
 
         self.RO_IDLE = False
         self.TR_HOR = False
