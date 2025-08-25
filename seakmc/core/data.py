@@ -2227,6 +2227,16 @@ class ActiveVolume(SeakmcData, MSONable):
     def __repr__(self):
         return self.__str__()
 
+    def Write_AV(self, filename, Fixed=False):
+        newAV = copy.deepcopy(self)
+        if not Fixed:
+            inds = np.arange(newAV.nactive, dtype=int)
+            newAV.atoms = newAV.atoms.iloc[inds]
+            newAV.natoms = len(newAV.atoms)
+            newAV.write_file(filename)
+        else:
+            newAV.write_file(filename)
+
     def to_coords(self, Buffer=False, Fixed=False):
         nout = self.nactive
         if Buffer: nout += self.nbuffer
