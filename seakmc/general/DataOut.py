@@ -36,6 +36,8 @@ def visualize_AV_SPs(Vsett, seakmcdata, AVitags, thisAV, thisSPS, istep, idav, A
         seakmcdata.Write_AVs(filename, idavs=idav, Buffer=Vsett["ShowBuffer"], Fixed=Vsett["ShowFixed"],
                              Invisible=Vsett["Invisible"], Reset_Index=Vsett["Reset_Index"])
 
+        filename = AVOutpath + "/" + "KMC_" + str(istep) + "_AV_" + str(idav) + ".dat"
+        thisAV.Write_AV(filename, Fixed=Vsett["ShowFixed"])
 
 def write_prob_to_file(Vsett, thiskmc, DataSPs, istep, SPOutpath, VerySmallNumber=1.0e-20):
     if Vsett["Write_Data_SPs"]["Write_Prob"]:
