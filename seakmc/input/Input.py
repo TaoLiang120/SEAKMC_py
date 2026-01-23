@@ -230,7 +230,8 @@ class Settings:
                      "partition": False, "Screen": False, "LogFile": False, "NSteps4Relax": 10000, "timestep": 0.002,
                      "Master_Slave4ReCal": False, "RinputOpt": False, "RinputMD0": False, "nproc4ReCal": "auto",
                      "ImportValue4RinputOpt": False, "Keys4ImportValue4RinputOpt": [["Timestep", "time_step"]],
-                     "OutFileHeaders": [], "Relaxation": Relaxation}
+                     "OutFileHeaders": [], "Relaxation": Relaxation,
+                     "GPU": None}
 
         if "force_evaluator" in parameters:
             force_evaluator = parameters["force_evaluator"]
@@ -276,6 +277,14 @@ class Settings:
             thisfeval["Bin"] = "callvasp"
         else:
             pass
+
+        if isinstance(thisfeval["GPU"], list):
+            GPU_dict = {}
+            for i in range(0, len(thisfeval["GPU"])):
+                thisstr = thisfeval["GPU"][i]
+                thisstr = thisstr.split(":")
+                GPU_dict[thisstr[0]] = thisstr[1]
+        thisfeval["GPU"] = GPU_dict
         ############################################################
         potential = parameters['potential']
         symbols = []
@@ -615,6 +624,7 @@ class Settings:
                         "ActiveOnly4SPConfig": True, "R2Dmax4SPAtom": 0.04, "DCut4SPAtom": 0.01, "DynCut4SPAtom": False,
                         "ShowIterationResults": False, "Inteval4ShowIterationResults": 1,
                         "ShowVN4ShowIterationResults": False, "ShowCoords4ShowIterationResults": False,
+                        "OutForces4IterationResults": False, "OutFix4IterationResults": False,
                         "ApplyMass": False, "TaskDist": "AV", "Master_Slave": True,
                         "LocalRelax": LocalRelax, "force_evaluator": spsearch_force_evaluator, "Preloading": Preloading,
                         "HandleVN": HandleVN}
@@ -651,7 +661,7 @@ class Settings:
                     pass
         #################################################################################
         thisDynMat = {"SNC": False, "NMax4SNC": 1000, "displacement": 0.000001,
-                      "delimiter": " ", "LowerHalfMat": False,
+                      "delimiter": " ", "LowerHalfMat": False, "OutDynMat": False,
                       "CalPrefactor": False, "Method4Prefactor": "harmonic", "VibCut": 1.0e-8}
         if "dynamic_matrix" in parameters:
             DynMat = parameters['dynamic_matrix']
