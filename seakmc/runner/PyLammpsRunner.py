@@ -13,7 +13,7 @@ __maintainer__ = "Tao Liang"
 __email__ = "xhtliang120@gmail.com"
 __date__ = "October 7th, 2021"
 
-
+Valid_GPU_args = ["-k", "-kokkos", "-sf", "-suffix", "-pk", "-package"]
 class PyLammpsRunner(object):
     def __init__(self, sett):
         self.name = 'pylammps'
@@ -47,8 +47,10 @@ class PyLammpsRunner(object):
         isValid = True
         total_energy = 0.0
         relaxed_coords = []
+        GPU_args = self.sett.force_evaluator["GPU"]
         self.init_binary(nproc=nproc_task, comm=None,
-                         Screen=self.sett.force_evaluator['Screen'], Log=self.sett.force_evaluator['LogFile'])
+                         Screen=self.sett.force_evaluator['Screen'], Log=self.sett.force_evaluator['LogFile'],
+                         **GPU_args)
 
         total_energy, relaxed_coords = self.execute_runner(rinputs)
 
@@ -75,8 +77,10 @@ class PyLammpsRunner(object):
         isValid = True
         total_energy = 0.0
         relaxed_coords = []
+        GPU_args = self.sett.force_evaluator["GPU"]
         self.init_binary(nproc=nproc_task, comm=None,
-                         Screen=self.sett.force_evaluator['Screen'], Log=self.sett.force_evaluator['LogFile'])
+                         Screen=self.sett.force_evaluator['Screen'], Log=self.sett.force_evaluator['LogFile'],
+                         **GPU_args)
 
         total_energy, relaxed_coords = self.execute_runner(rinputs)
 
@@ -110,13 +114,18 @@ class PyLammpsRunner(object):
                          f"Job - purpose: {purpose} datatype:{type(data)} thiscolor: {thiscolor} nactive:{nactive}!")
         return [total_energy, forces, isValid, errormsg]
 
-    def init_binary(self, nproc=1, comm=None, Screen=False, Log=False):
+    def init_binary(self, nproc=1, comm=None, Screen=False, Log=False, **kwargs):
         args = []
         if not Screen: args = ["-screen", "none"]
         if isinstance(Log, str):
             args += ["-log", Log]
         else:
             args += ["-log", "none"]
+        if isinstance(kwargs, dict):
+            for key in kwargs:
+                if key in Valid_GPU_args:
+                    args += [key, kwargs[key]]
+
         self.bin = lammps(cmdargs=args, comm=comm)
 
     def execute_runner(self, rinputs):
