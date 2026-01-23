@@ -60,6 +60,7 @@ force_evaluator:
     ImportValue4RinputOpt: False
     Keys4ImportValue4RinputOpt:
         - Timestep, time_step
+    GPU: None
 data:
     atom_style: atomic
     FileName: data.small.dat
@@ -102,6 +103,7 @@ defect_bank:
 dynamic_matrix:
     SNC: False
     CalPrefactor: False
+    OutDynMat: False
     NMax4SNC: 1000
     displacement: 0.000001
     delimiter: " "
@@ -286,6 +288,8 @@ spsearch:
     Inteval4ShowIterationResults: 1
     ShowVN4ShowIterationResults: False 
     ShowCoords4ShowIterationResults: False
+    OutForces4IterationResults: False
+    OutFix4IterationResults: False
     FixTypes: False
     FixAxesStr: ALL
     TaskDist: AV
