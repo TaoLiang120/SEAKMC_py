@@ -283,8 +283,8 @@ class Settings:
             for i in range(0, len(thisfeval["GPU"])):
                 thisstr = thisfeval["GPU"][i]
                 thisstr = thisstr.split(":")
-                GPU_dict[thisstr[0]] = thisstr[1]
-        thisfeval["GPU"] = GPU_dict
+                GPU_dict[thisstr[0]] = thisstr[1].strip()
+            thisfeval["GPU"] = GPU_dict
         ############################################################
         potential = parameters['potential']
         symbols = []
