@@ -451,13 +451,26 @@ class Dimer(SPSearch):
         self.TR_HOR = False
 
         self.DRATIO = self.sett.spsearch["DRatio4Relax"]
-        self.IgnoreTransSteps = self.sett.spsearch["IgnoreSteps"]
         self.RDIMER = self.sett.spsearch["DimerSep"]
         self.isTR_HOR = self.sett.spsearch["TransHorizon"]
-        self.TSTEPF = self.sett.spsearch["TrialStepsize"]  #/self.Rescale
-        self.TSTEPM = self.sett.spsearch["MaxStepsize"]  #/self.Rescale
-        self.RatioStepsize = self.TSTEPM / self.TSTEPF
-        self.DECAYSTYLE = self.sett.spsearch["DecayStyle"]
+
+        self.FineStep = False
+        if isinstance(self.pre_disps, list) or isinstance(self.pre_disps, np.ndarray):
+            if len(self.pre_disps) > 0:
+                self.FineStep = True
+
+        if self.FineStep:
+            self.TSTEPF = self.sett.spsearch["TrialStepsizeFine"]  # /self.Rescale
+            self.TSTEPM = self.sett.spsearch["MaxStepsizeFine"]  # /self.Rescale
+            self.RatioStepsize = self.TSTEPM / self.TSTEPF
+            self.DECAYSTYLE = "Fixed"
+            self.IgnoreTransSteps = self.sett.spsearch["IgnoreStepsFine"]
+        else:
+            self.TSTEPF = self.sett.spsearch["TrialStepsize"]  # /self.Rescale
+            self.TSTEPM = self.sett.spsearch["MaxStepsize"]  # /self.Rescale
+            self.RatioStepsize = self.TSTEPM / self.TSTEPF
+            self.DECAYSTYLE = self.sett.spsearch["DecayStyle"]
+            self.IgnoreTransSteps = self.sett.spsearch["IgnoreSteps"]
 
         if thisVN is not None:
             self.VN = thisVN.copy()
@@ -529,10 +542,16 @@ class Dimer(SPSearch):
             pass
         else:
             drate = get_decayrate(itstep)
-            self.TSTEPF = (
-                        self.sett.spsearch["TrialStepsize"] * drate + self.sett.spsearch["MinStepsize"])  #/self.Rescale
-            self.TSTEPM = (self.sett.spsearch["MaxStepsize"] * drate + self.sett.spsearch["MinStepsize"] *
-                           self.sett.spsearch["RatioStepsize"])  #/self.Rescale
+            if self.FineStep:
+                self.TSTEPF = (
+                        self.sett.spsearch["TrialStepsizeFine"] * drate + self.sett.spsearch["MinStepsizeFine"])
+                self.TSTEPM = (self.sett.spsearch["MaxStepsizeFine"] * drate + self.sett.spsearch["MinStepsizeFine"] *
+                               self.sett.spsearch["RatioStepsizeFine"])
+            else:
+                self.TSTEPF = (
+                        self.sett.spsearch["TrialStepsize"] * drate + self.sett.spsearch["MinStepsize"])
+                self.TSTEPM = (self.sett.spsearch["MaxStepsize"] * drate + self.sett.spsearch["MinStepsize"] *
+                               self.sett.spsearch["RatioStepsize"])
 
     def move_atoms_to_predisp(self):
         self.X0 = np.copy(self.XACT)
@@ -1070,10 +1089,12 @@ class Dimer(SPSearch):
             self.TR_HOR = False
             self.CenterVN = False
 
-            if self.DECAYSTYLE.upper() == "FIXED":
-                pass
-            else:
-                self.DECAYSTYLE = "FIXED"
+            self.FineStep = True
+            self.TSTEPF = self.sett.spsearch["TrialStepsizeFine"]  # /self.Rescale
+            self.TSTEPM = self.sett.spsearch["MaxStepsizeFine"]  # /self.Rescale
+            self.RatioStepsize = self.TSTEPM / self.TSTEPF
+            self.DECAYSTYLE = "FIXED"
+            self.IgnoreTransSteps = self.sett.spsearch["IgnoreStepsFine"]
             #self.TSTEPF = self.sett.spsearch["MinStepsize"]
             #self.TSTEPM = self.sett.spsearch["MinStepsize"]*self.sett.spsearch["RatioStepsize"]
 
