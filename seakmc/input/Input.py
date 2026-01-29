@@ -614,8 +614,9 @@ class Settings:
                     "MinSpan4LOGV": 4.0, "MinSpan4RAS": 40.0,
                     "ResetVN04Preload": True, "RatioVN04Preload": 0.2}
         thisspsearch = {"Method": "dimer", "NSearch": 10, "SearchBuffer": False, "NMax4Trans": 1000, "IgnoreSteps": 4,
-                        "DimerSep": 0.005, "NMax4Rot": 3, "FThres4Rot": 0.1, "FMin4Rot": 0.001, "TrialStepsize": 0.015,
-                        "MaxStepsize": 0.05,
+                        "DimerSep": 0.005, "NMax4Rot": 3, "FThres4Rot": 0.1, "FMin4Rot": 0.001,
+                        "TrialStepsize": 0.015, "MaxStepsize": 0.05,
+                        "IgnoreStepsFine": 2, "TrialStepsizeFine": 0.003, "MaxStepsizeFine": 0.01,
                         "DRatio4Relax": 2.0, "FConv": 1e-6, "EnConv": 1e-5, "En4TransHorizon": 0.1,
                         "TransHorizon": True,
                         "CheckAng": True, "CheckAngSteps": 50, "AngCut": 2.0,
@@ -646,6 +647,7 @@ class Settings:
             else:
                 thisspsearch[key] = spsearch[key]
         thisspsearch["RatioStepsize"] = thisspsearch["MaxStepsize"] / thisspsearch["TrialStepsize"]
+        thisspsearch["RatioStepsizeFine"] = thisspsearch["MaxStepsizeFine"] / thisspsearch["TrialStepsizeFine"]
         ################################################################################
         thisKMC = {"NSteps": 1, "Temp": 800.0, "Temp4Time": 800.0, "AccStyle": "NoAcc", "NMaxBasin": "NA",
                    "Tol4Disp": 0.1, "Tol4Barr": 0.03,
