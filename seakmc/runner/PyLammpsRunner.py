@@ -121,10 +121,18 @@ class PyLammpsRunner(object):
             args += ["-log", Log]
         else:
             args += ["-log", "none"]
+
         if isinstance(kwargs, dict):
             for key in kwargs:
                 if key in Valid_GPU_args:
-                    args += [key, kwargs[key]]
+                    val = kwargs[key]
+                    args.append(key)
+                    if isinstance(val, str):
+                        vs = val.split(",")
+                        for v in vs:
+                            args.append(v.strip())
+                else:
+                    args.append(str(val))
 
         self.bin = lammps(cmdargs=args, comm=comm)
 
