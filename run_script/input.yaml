@@ -111,7 +111,7 @@ dynamic_matrix:
     Method4Prefactor: harmonic
     VibCut: 1.0e-8
 saddle_point:
-    Prefactor: 1.0
+    Prefactor: 10.0
     CalBarrsInData: False
     CalEbiasInData: False
     Thres4Recalib: None
@@ -263,8 +263,10 @@ spsearch:
     NMax4Rot: 3
     NMax4Trans: 1000
     IgnoreSteps: 4
-    TrialStepsize: 0.01522
+    TrialStepsize: 0.015
     MaxStepsize: 0.05
+    TrialStepsizeFine: 0.003
+    MaxStepsizeFine: 0.01
     MinStepsize: 0.003
     CheckAng: True
     AngCut: 2.0
