@@ -764,19 +764,19 @@ class SeakmcData(LammpsData, MSONable):
 
         defect_list = []
         dCN_list = []
-        if self.sett.active_volume["FindDefects"]["DiscardType"][0:2].upper() != "UN":
-            indv = np.where(tv == 0)
-            for i in range(indv[0].shape[0]):
-                j = indv[0][i]
-                defect_list.append(ref_atoms_ghost_array[j])
-                dCN_list.append(-1)
+        #if self.sett.active_volume["FindDefects"]["DiscardType"][0:2].upper() != "UN":
+        indv = np.where(tv == 0)
+        for i in range(indv[0].shape[0]):
+            j = indv[0][i]
+            defect_list.append(ref_atoms_ghost_array[j])
+            dCN_list.append(-1)
 
-        if self.sett.active_volume["FindDefects"]["DiscardType"][0:2].upper() != "OV":
-            indi = np.where(ti == 0)
-            for i in range(indi[0].shape[0]):
-                j = indi[0][i]
-                defect_list.append(ref_atoms_ghost_array[j])
-                dCN_list.append(1)
+        #if self.sett.active_volume["FindDefects"]["DiscardType"][0:2].upper() != "OV":
+        indi = np.where(ti == 0)
+        for i in range(indi[0].shape[0]):
+            j = indi[0][i]
+            defect_list.append(ref_atoms_ghost_array[j])
+            dCN_list.append(1)
         return defect_list, dCN_list
 
     def custom_find_defects(self):
