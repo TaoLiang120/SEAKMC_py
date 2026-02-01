@@ -380,7 +380,10 @@ class Settings:
                 thisstr = thisstr.split(",")
                 try:
                     iele = int(thisstr[0].strip()) - 1
-                    coordnums[iele] = float(thisstr[1].strip())
+                    try:
+                        coordnums[iele] = float(thisstr[1].strip())
+                    except:
+                        coordnums[iele] = np.nan
                 except:
                     pass
 
@@ -471,7 +474,7 @@ class Settings:
         ###################################################################
         cutdefectmax = max(cutneighs.flatten())
         cutdefectmin = min(cutneighs.flatten())
-        FindDefects = {"Method": "BLCN", "MolIDCap": "NA", "DiscardType": "NA"}
+        FindDefects = {"Method": "BLCN", "MolIDCap": "NA", "DiscardType": []}
         sort_by = ["D", "X", "Y", "Z"]
         thisav = {"NPredef": 0, "PredefOnly": False, "Style": "defects",
                   "FindDefects": FindDefects, "cutdefectmax": cutdefectmax,
@@ -502,7 +505,19 @@ class Settings:
                     active_volume["NFixed"] = 0
 
         defects = []
+        discardtypes = []
         if "FindDefects" in active_volume:
+            if "DiscardType" in active_volume["FindDefects"]:
+                if isinstance(active_volume["FindDefects"]["DiscardType"], list):
+                    for i in range(len(active_volume["FindDefects"]["DiscardType"])):
+                        discardtypes.append(int(active_volume["FindDefects"]["DiscardType"][i]))
+                else:
+                    try:
+                        discardtypes.append(int(active_volume["FindDefects"]["DiscardType"]))
+                    except:
+                        pass
+                active_volume["FindDefects"]["DiscardType"] = discardtypes
+
             if "Method" in active_volume["FindDefects"]:
                 if "WS" in active_volume["FindDefects"]["Method"].upper():
                     if "ReferenceData" not in active_volume["FindDefects"]:

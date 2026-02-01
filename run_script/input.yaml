@@ -218,6 +218,7 @@ active_volume:
         - NA
         - NA
     FindDefects:
+          DiscardType: NA
           Method: BLCN
           ReferenceData: optional entry
           atom_style4Ref: atomic
