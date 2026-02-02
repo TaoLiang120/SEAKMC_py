@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import json
+import shutil
 
 from seakmc.core.symmetry import PGSymmOps, SymmOP
 from seakmc.dynmat.Dynmat import DynMat
@@ -130,16 +131,23 @@ def initial_SNC_CalPref(idav, thisAV, thissett):
     return SNC, CalPref, errorlog
 
 
-def get_dynmatAV(idav, thissett, thisAV, force_evaluator, thiscolor):
+def get_dynmatAV(idav, thissett, thisAV, force_evaluator, thiscolor, istep, DynMatOutpath):
     [etotal, coords, isValid, errormsg] = force_evaluator.run_runner("SPSDYNMAT", thisAV, thiscolor,
                                                                      nactive=thisAV.nactive, thisExports=None)
     if not isValid:
         print(errormsg)
         quit()
+
+    fname = "Runner_" + str(thiscolor) + "/dynmat.dat"
+    if thissett.dynamic_matrix["OutDynMat"]:
+        outf = os.path.join(DynMatOutpath, "KMC_" + str(istep) + "_AV_" + str(idav) + ".dat")
+        if not os.path.exists(outf):
+            shutil.copy(fname, outf)
+
     delimiter = thissett.dynamic_matrix["delimiter"]
     vibcut = thissett.dynamic_matrix["VibCut"]
     LowerHalfMat = thissett.dynamic_matrix["LowerHalfMat"]
-    dynmatAV = DynMat.from_file("Runner_" + str(thiscolor) + "/dynmat.dat", id=idav,
+    dynmatAV = DynMat.from_file(fname, id=idav,
                                 delimiter=delimiter, vibcut=vibcut, LowerHalfMat=LowerHalfMat)
     return dynmatAV
 
@@ -155,9 +163,10 @@ def diagonize_dynmatAV(dynmatAV, isVib=False, Get_inv_luf=True):
     return dynmatAV
 
 
-def get_thisSNC4spsearch(idav, thissett, thisAV, thisSNC, thisCalPref, object_dict, thiscolor):
+def get_thisSNC4spsearch(idav, thissett, thisAV, thisSNC, thisCalPref, object_dict, thiscolor, istep):
     force_evaluator = object_dict['force_evaluator']
-    dynmatAV = get_dynmatAV(idav, thissett, thisAV, force_evaluator, thiscolor)
+    DynMatOutpath = object_dict['out_paths'][5]
+    dynmatAV = get_dynmatAV(idav, thissett, thisAV, force_evaluator, thiscolor, istep, DynMatOutpath)
     dynmatAV = diagonize_dynmatAV(dynmatAV, isVib=False, Get_inv_luf=True)
     if not dynmatAV.isValid:
         thisSNC = False

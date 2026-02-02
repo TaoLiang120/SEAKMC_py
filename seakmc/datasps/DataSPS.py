@@ -54,7 +54,7 @@ def data_find_saddlepoints(istep, thissett, seakmcdata, DefectBank_list, thisSup
             dynmatAV = None
             if SNC or CalPref:
                 SNC, CalPref, dynmatAV = preSPS.get_thisSNC4spsearch(idav, thissett, thisAV, SNC, CalPref, object_dict,
-                                                                     thiscolor)
+                                                                     thiscolor, istep)
 
             thisSPS, df_delete_SPs = mySPS.saddlepoint_search(thiscolor, istep, thissett, idav, thisAV, local_coords,
                                                               thisSOPs, dynmatAV, SNC, CalPref,
