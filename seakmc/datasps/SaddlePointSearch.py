@@ -76,6 +76,8 @@ def saddlepoint_search(thiscolor, istep, thissett, idav, thisAV, local_coords, t
                 toDel = thisspsearch.is_to_be_delete()
                 if not toDel:
                     thisspsearch.calculate_prefactor()
+                    if thissett.dynamic_matrix["OutDynMat"]:
+                        thisspsearch.calculate_dynamic_matrix(config="FI")
             thisspsearch.force_evaluator.close()
             thisspsearch.dimer_finish()
 
