@@ -170,14 +170,16 @@ def object_maker(thissett, thisRestart):
         quit()
     object_dict['force_evaluator'] = thisRunner
 
-    AVOutpath = os.path.join(THIS_PATH, "AVOut")
-    os.makedirs(AVOutpath, exist_ok=True)
-
     DataOutpath = os.path.join(THIS_PATH, "DataOut")
     os.makedirs(DataOutpath, exist_ok=True)
 
     SPOutpath = os.path.join(THIS_PATH, "SPOut")
     os.makedirs(SPOutpath, exist_ok=True)
+
+    AVOutpath = os.path.join(THIS_PATH, "AVOut")
+    if (thissett.visual["Write_AV_SPs"]["Write_Local_AV"] or thissett.visual["Write_AV_SPs"]["Write_AV_SPs"] or
+            thissett.visual["Write_AV_SPs"]["Write_Data_AV_SPs"]):
+        os.makedirs(AVOutpath, exist_ok=True)
 
     if isinstance(thissett.defect_bank["LoadPath"], str):
         DBLoadpath = os.path.join(THIS_PATH, thissett.defect_bank["LoadPath"])
@@ -186,12 +188,14 @@ def object_maker(thissett, thisRestart):
 
     if isinstance(thissett.defect_bank["SavePath"], str):
         DBSavepath = os.path.join(THIS_PATH, thissett.defect_bank["SavePath"])
-        os.makedirs(DBSavepath, exist_ok=True)
     else:
         DBSavepath = THIS_PATH
+    if thissett.defect_bank["SaveDB"]:
+        os.makedirs(DBSavepath, exist_ok=True)
 
     DynMatOutpath = os.path.join(THIS_PATH, "DynMatOut")
-    os.makedirs(DynMatOutpath, exist_ok=True)
+    if thissett.dynamic_matrix["OutDynMat"]:
+        os.makedirs(DynMatOutpath, exist_ok=True)
 
     Paths = [AVOutpath, DataOutpath, DBLoadpath, DBSavepath, SPOutpath, DynMatOutpath, THIS_PATH]
     object_dict['out_paths'] = Paths
