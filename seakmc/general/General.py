@@ -190,7 +190,7 @@ def object_maker(thissett, thisRestart):
         DBSavepath = os.path.join(THIS_PATH, thissett.defect_bank["SavePath"])
     else:
         DBSavepath = THIS_PATH
-    if thissett.defect_bank["SaveDB"]:
+    if thissett.defect_bank["SaveDB"] or thissett.defect_bank["Recycle"]:
         os.makedirs(DBSavepath, exist_ok=True)
 
     DynMatOutpath = os.path.join(THIS_PATH, "DynMatOut")
