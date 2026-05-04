@@ -71,6 +71,11 @@ class Basin:
             self.localiav = np.take_along_axis(self.localiav, inds, axis=0)
             self.localisp = np.take_along_axis(self.localisp, inds, axis=0)
 
+        rnd = np.random.rand(1)
+        self.timeelapse = -np.log(rnd[0]) * self.sumfreq
+        self.one_over_freq = 1.0 / self.sumfreq
+        self.equi_barr = -np.log(self.sumfreq / self.meanpref) * KB * self.temp
+
     def __str__(self):
         return "Basin id is ({}).".format(self.id)
 
@@ -362,6 +367,9 @@ class DataKMC:
         self.isp_sels = []
         self.gsp_sels = []
         self.isels = []
+        self.one_over_freq = 0.0
+        self.mean_squared_disp = 0.0
+        self.diffusion_coeff = 0.0
         self.timeelapse = 0.0
         self.iter = 0
         self.isValid = True
@@ -394,13 +402,15 @@ class DataKMC:
         rnd = np.random.rand(1)
         if self.sett["Temp"] == self.sett["Temp4Time"]:
             thistime = -np.log(rnd[0]) * thisSuperBasin.sumtime
+            thisoneoverfreq = 1.0 * thisSuperBasin.sumtime
         else:
             logtime = np.log(thisSuperBasin.sumtime)
             thisbarr = (np.log(thisSuperBasin.meanpref) + logtime) * KB * self.temp
             thissumtime = 1.0 / (np.exp(-thisbarr / (KB * self.sett["Temp4Time"])) * thisSuperBasin.meanpref)
             thistime = -np.log(rnd[0]) * thissumtime
+            thisoneoverfreq = 1.0 * thissumtime
         #thistime = 1.0*thisSuperBasin.sumtime
-        return thistime
+        return thistime, thisoneoverfreq
 
     def get_probs(self, thisSuperBasin):
         #thisfreqs = self.freqs*np.concatenate(self.sumfreqs).flatten()/self.sumfreq
@@ -464,12 +474,22 @@ class DataKMC:
         else:
             pass
 
+    def get_diffusion_coeff(self, thisSuperBasin):
+        iba = self.iba_sels[len(self.iba_sels) - 1]
+        isp = self.isp_sels[len(self.isp_sels) - 1]
+        thisBasin = thisSuperBasin.Basin_list[iba]
+        self.mean_squared_disp = np.linalg.norm(thisBasin.fdisps[isp].astype(float))
+        self.mean_squared_disp = self.mean_squared_disp * self.mean_squared_disp
+        self.diffusion_coeff = self.mean_squared_disp / self.one_over_freq / 6.0
+
     def run_KMC(self, thisSuperBasin):
         while self.isValid:
             isel = self.select_event(thisSuperBasin)
             self.gsp_sels.append(isel)
             self.update_information(isel, thisSuperBasin)
-            self.timeelapse += self.get_timestep(thisSuperBasin)
+            thistime, thisoneoverfreq = self.get_timestep(thisSuperBasin)
+            self.timeelapse += thistime
+            self.one_over_freq += thisoneoverfreq
             self.iter += 1
         return self.timeelapse
 

@@ -2293,7 +2293,7 @@ class ActiveVolume(SeakmcData, MSONable):
         else:
             pass
 
-    def update_avcoords_from_disps(self, disps):
+    def update_avcoords_from_disps(self, disps, Reset_MolID=False):
         if isinstance(disps, np.ndarray):
             disps = disps.astype(float)
             n = disps.shape[1]
@@ -2302,6 +2302,15 @@ class ActiveVolume(SeakmcData, MSONable):
             self.atoms['x'] = np.add(self.atoms['x'].to_numpy(), thisdisps[0])
             self.atoms['y'] = np.add(self.atoms['y'].to_numpy(), thisdisps[1])
             self.atoms['z'] = np.add(self.atoms['z'].to_numpy(), thisdisps[2])
+
+            if Reset_MolID:
+                mids = np.ones(disps.shape[1], dtype=int)
+                mids_app = np.zeros(self.natoms - disps.shape[1], dtype=int)
+                mids = np.hstack((mids, mids_app))
+                im = ATOMS_HEADERS[self.atom_style].index('molecule-ID')
+                if 'molecule-ID' in self.atoms.columns:
+                    self.atoms = self.atoms.drop(['molecule-ID'], axis=1)
+                self.atoms.insert(im, 'molecule-ID', mids)
         else:
             pass
 
@@ -2566,6 +2575,43 @@ class ActiveVolume(SeakmcData, MSONable):
             filename = fileheader + DispStyles[m] + ".dat"
             if isinstance(OutPath, str): filename = os.path.join(OutPath, filename)
             newdata.to_lammps_data(filename, to_atom_style=False, distance=self.sett.system["significant_figures"])
+
+    def Write_Sep_avSPs(self, SPlist, fileheader, OutPath=False, DispStyle="SP",
+                          Invisible=True, Reset_Index=False):
+
+        if DispStyle[0:2].upper() == "FI":
+            istart = 1
+            iend = 2
+        elif DispStyle[0:2].upper() == "SP":
+            istart = 0
+            iend = 1
+        else:
+            istart = 0
+            iend = 2
+
+        for m in range(istart, iend):
+            thisdata = copy.deepcopy(self)
+            for i in range(len(SPlist)):
+                idsp = SPlist[i].idsps
+                if m == 1:
+                    thisdisp = SPlist[i].fdisp.copy()
+                    filename = fileheader + "FI_" + str(idsp) + ".dat"
+                else:
+                    thisdisp = SPlist[i].disp.copy()
+                    filename = fileheader + "SP_" + str(idsp) + ".dat"
+                thisdisp = thisdisp.astype(float)
+                thisdata.update_avcoords_from_disps(thisdisp, Reset_MolID=True)
+                thisdata.atoms[["molecule-ID", "type"]] = thisdata.atoms[["molecule-ID", "type"]].astype(int)
+                if Invisible:
+                    thisdata.atoms = thisdata.atoms.drop(thisdata.atoms[thisdata.atoms["molecule-ID"] <= 0].index,
+                                                     inplace=False)
+                    thisdata.velocities = None
+                    thisdata.natoms = len(thisdata.atoms)
+
+                if Reset_Index: thisdata.atoms = thisdata.atoms.set_index(np.arange(len(thisdata.atoms), dtype=int) + 1)
+
+                if isinstance(OutPath, str): filename = os.path.join(OutPath, filename)
+                thisdata.to_lammps_data(filename, to_atom_style=False, distance=self.sett.system["significant_figures"])
 
 
 class ActiveVolumeSPS(ActiveVolume):

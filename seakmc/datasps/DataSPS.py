@@ -16,10 +16,10 @@ __date__ = "October 7th, 2021"
 
 
 def data_find_saddlepoints(istep, thissett, seakmcdata, DefectBank_list, thisSuperBasin, Eground,
-                           DataSPs, AVitags, df_delete_SPs, undo_idavs, finished_AVs, simulation_time, object_dict):
+                           DataSPs, AVitags, df_delete_SPs, undo_idavs, finished_AVs, simulation_time,
+                           DFWriter, object_dict):
     out_paths = object_dict['out_paths']
     LogWriter = object_dict['LogWriter']
-    DFWriter = object_dict['DFWriter']
 
     float_precision = thissett.system['float_precision']
     iav = 0
@@ -59,7 +59,7 @@ def data_find_saddlepoints(istep, thissett, seakmcdata, DefectBank_list, thisSup
             thisSPS, df_delete_SPs = mySPS.saddlepoint_search(thiscolor, istep, thissett, idav, thisAV, local_coords,
                                                               thisSOPs, dynmatAV, SNC, CalPref,
                                                               thisSPS, Pre_Disps, thisnspsearch, thisVNS,
-                                                              df_delete_SPs, object_dict)
+                                                              df_delete_SPs, DFWriter, object_dict)
 
             thisSPS, df_delete_SPs = postSPS.SPs_1postprocessing(thissett, thisSPS, df_delete_SPs, DFWriter,
                                                                  nSPstart=thisSPS.nSP)

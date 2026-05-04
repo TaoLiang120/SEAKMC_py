@@ -14,7 +14,9 @@ def run_KMC(istep, thisSuperBasin, seakmcdata, AVitags, DataSPs, thissett, simul
                       VerySmallNumber=thissett.system["VerySmallNumber"])
     nSPthis = thisBasin.nSP
     thiskmc.initialization(thisSuperBasin, thisBasin)
-    time_step = thiskmc.run_KMC(thisSuperBasin)
+    thiskmc.run_KMC(thisSuperBasin)
+    time_step = thiskmc.timeelapse
+    thiskmc.get_diffusion_coeff(thisSuperBasin)
     liba = thiskmc.iba_sels[len(thiskmc.iba_sels) - 1]
     lisp = thiskmc.isp_sels[len(thiskmc.isp_sels) - 1]
     forward_barrier = thisSuperBasin.Basin_list[liba].barrs[lisp]
@@ -50,6 +52,9 @@ def run_KMC(istep, thisSuperBasin, seakmcdata, AVitags, DataSPs, thissett, simul
     thisExports["forward_barrier"] = forward_barrier
     thisExports["ebias"] = thisSuperBasin.Basin_list[liba].bias[lisp]
     thisExports["backward_barrier"] = backward_barrier
+    thisExports["one_over_freq"] = thiskmc.one_over_freq
+    thisExports["mean_squared_disp"] = thiskmc.mean_squared_disp
+    thisExports["diffusion_coeff"] = thiskmc.diffusion_coeff
     thisExports["time_step"] = time_step
     thisExports["simulation_time"] = simulation_time
 

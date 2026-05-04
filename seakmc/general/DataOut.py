@@ -20,22 +20,18 @@ def visualize_AV_SPs(Vsett, seakmcdata, AVitags, thisAV, thisSPS, istep, idav, A
     if Vsett["Write_AV_SPs"]["Write_AV_SPs"]:
         if thisSPS.nSP > 0:
             fileheader = "KMC_" + str(istep) + "_AV_" + str(idav) + "_"
-            thisAV.Write_Stack_avSPs(thisSPS.SPlist, fileheader, OutPath=AVOutpath,
-                                   rdcut4vis=Vsett["RCut4Vis"], dcut4vis=Vsett["DCut4Vis"],
-                                   DispStyle=Vsett["Write_AV_SPs"]["DispStyle4AVSP"],
-                                   Invisible=Vsett["Invisible"], Reset_Index=Vsett["Reset_Index"])
-    if Vsett["Write_AV_SPs"]["Write_Data_AV_SPs"]:
-        if thisSPS.nSP > 0:
-            fileheader = "KMC_" + str(istep) + "_Data_AV_" + str(idav) + "_"
-            seakmcdata.Write_Stack_SPs(thisSPS.SPlist, AVitags, fileheader, OutPath=AVOutpath,
-                                       rdcut4vis=Vsett["RCut4Vis"], dcut4vis=Vsett["DCut4Vis"],
-                                       DispStyle=Vsett["Write_AV_SPs"]["DispStyle4AVSP"],
-                                       Invisible=Vsett["Invisible"], Reset_Index=Vsett["Reset_Index"])
-    if Vsett["Write_AV_SPs"]["Write_Local_AV"]:
-        filename = AVOutpath + "/" + "KMC_" + str(istep) + "_Data_AV_" + str(idav) + ".dat"
-        seakmcdata.Write_AVs(filename, idavs=idav, Buffer=Vsett["ShowBuffer"], Fixed=Vsett["ShowFixed"],
-                             Invisible=Vsett["Invisible"], Reset_Index=Vsett["Reset_Index"])
 
+            if Vsett["Write_AV_SPs"]["OutputStyle"][0:3].upper() == "STA":
+                 thisAV.Write_Stack_avSPs(thisSPS.SPlist, fileheader, OutPath=AVOutpath,
+                                     rdcut4vis=Vsett["RCut4Vis"], dcut4vis=Vsett["DCut4Vis"],
+                                     DispStyle=Vsett["Write_AV_SPs"]["DispStyle4AVSP"],
+                                     Invisible=Vsett["Invisible"], Reset_Index=Vsett["Reset_Index"])
+            else:
+                thisAV.Write_Sep_avSPs(thisSPS.SPlist, fileheader, OutPath=AVOutpath,
+                                         DispStyle=Vsett["Write_AV_SPs"]["DispStyle4AVSP"],
+                                         Invisible=Vsett["Invisible"], Reset_Index=Vsett["Reset_Index"])
+
+    if Vsett["Write_AV_SPs"]["Write_Local_AV"]:
         filename = AVOutpath + "/" + "KMC_" + str(istep) + "_AV_" + str(idav) + ".dat"
         thisAV.Write_AV(filename, Fixed=Vsett["ShowFixed"])
 

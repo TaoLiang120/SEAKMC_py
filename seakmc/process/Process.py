@@ -2,6 +2,7 @@ import os
 import time
 import pandas as pd
 import numpy as np
+import copy
 import shutil
 
 from seakmc.input.Input import SP_COMPACT_HEADER4Delete, SP_DATA_HEADER
@@ -14,6 +15,8 @@ import seakmc.datasps.PreSPS as preSPS
 import seakmc.datasps.DataSPS as dataSPS
 import seakmc.datasps.ReCalibrate as myRecal
 import seakmc.datasps.DataKMC as dataKMC
+from seakmc.process.TrialDisp2Basin import TrialDisp2Basin, TrialDisps
+
 
 
 def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
@@ -49,9 +52,32 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
         tickmc = time.time()
         DFWriter.init_deleted_SPs(istep)
         DFWriter.init_SPs(istep)
-
         logstr = f"istep KMC: {istep}"
         LogWriter.write_data(logstr)
+
+        if thissett.force_evaluator["TrialDisps2Basin"]["TrialDisps2Basin"]:
+            TDBsett = thissett.force_evaluator["TrialDisps2Basin"]
+            thisTrialDisps = TrialDisps(TDBsett["Disps"], TDBsett["Ref_Length"], TDBsett["Target_StrainRate"],
+                 temp=thissett.kinetic_MC["temp"], mindisp=TDBsett["MinDisp"], maxdisp=TDBsett["MaxDisp"],
+                                        straintype=TDBsett["StrainRateType"])
+            for itrial in range(TDBsett["nDisps"]):
+                displacement = thisTrialDisps.displacements[itrial]
+                thisTDB = TrialDisp2Basin(seakmcdata, displacement, itrial, Eground=Eground, key=TDBsett["Keyword4RinputTDB"])
+                thisTDB.relax_basin(force_evaluator, LogWriter, ntask_tot=1, nproc_task=1)
+                thisTDB.run_seakmc(istep, thissett, object_dict)
+                thisTrialDisps.Add_one_trialdisp(thisTDB)
+            target_displacement = thisTrialDisps.apply_displacement()
+
+            logstr = f"strains:{thisTrialDisps.strains} one_over_freqs:{thisTrialDisps.one_over_freqs}"
+            logstr += "\n" + f"target strain:{thisTrialDisps.target_strain} target displacement:{target_displacement}"
+
+            thisTDB = TrialDisp2Basin(seakmcdata, target_displacement, itrial+1, Eground=Eground,
+                                      key=TDBsett["Keyword4RinputTDB"])
+            thisTDB.relax_basin(force_evaluator, LogWriter, ntask_tot=1, nproc_task=1)
+            seakmcdata = copy.deepcopy(thisTDB.thisdata)
+            Eground = thisTDB.Eground
+
+
         if thisRestart is None:
             seakmcdata.get_defects(LogWriter, last_de_center=last_de_center)
             dataout.visualize_data_AVs(thissett.visual, seakmcdata, istep, out_paths[1])
@@ -96,7 +122,8 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
         seakmcdata, DataSPs, AVitags = dataSPS.data_find_saddlepoints(istep, thissett, seakmcdata, DefectBank_list,
                                                                       thisSuperBasin, Eground,
                                                                       DataSPs, AVitags, df_delete_SPs, undo_idavs,
-                                                                      finished_AVs, simulation_time, object_dict)
+                                                                      finished_AVs, simulation_time,
+                                                                      DFWriter, object_dict)
 
         seakmcdata.to_atom_style()
         seakmcdata.velocities = None

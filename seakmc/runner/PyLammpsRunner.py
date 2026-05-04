@@ -170,6 +170,12 @@ class PyLammpsRunner(object):
                 rinputs = self.modify_input_script(self.sett.data["RinputOpt"], thiscolor, nactive)
             else:
                 rinputs = self.get_default_inputs(purpose, data, thiscolor, nactive)
+        elif purpose == "DATATDB":
+            if isinstance(self.sett.force_evaluator["TrialDisps2Basin"]["Rinput4TDB"], str):
+                rinputs = self.modify_input_script(self.sett.force_evaluator["TrialDisps2Basin"]["Rinput4TDB"], thiscolor, nactive)
+                rinputs = self.ImportValue4RinputOpt(rinputs, purpose, thisExports)
+            else:
+                rinputs = self.get_default_inputs(purpose, data, thiscolor, nactive)
         elif purpose == "MD0" or "RECAL" in purpose:
             if isinstance(self.sett.force_evaluator["RinputMD0"], str):
                 rinputs = self.modify_input_script(self.sett.force_evaluator["RinputMD0"], thiscolor, nactive)
@@ -178,7 +184,7 @@ class PyLammpsRunner(object):
         elif purpose == "OPT" or purpose == "RELAX":
             if isinstance(self.sett.force_evaluator["RinputOpt"], str):
                 rinputs = self.modify_input_script(self.sett.force_evaluator["RinputOpt"], thiscolor, nactive)
-                rinputs = self.ImportValue4RinputOpt(rinputs, thisExports)
+                rinputs = self.ImportValue4RinputOpt(rinputs, purpose, thisExports)
             else:
                 rinputs = self.get_default_inputs(purpose, data, thiscolor, nactive)
         elif purpose == "SPSDYNMAT" or purpose == "DYNMAT":
@@ -281,28 +287,6 @@ class PyLammpsRunner(object):
             lines.append("run     0")
             #lines.append("print   etotal=$(pe+ke)")
             #lines.append("write_data     Runner_" + str(thiscolor)+"/tmp1.dat")
-        elif purpose == "OPT" or purpose == "RELAX" or purpose == "DATAOPT" or purpose == "DATARELAX":
-            Steps = self.sett.force_evaluator["NSteps4Relax"]
-            if purpose == "OPT" or purpose == "RELAX":
-                if self.sett.force_evaluator["Relaxation"]["BoxRelax"]:
-                    lines.append("fix fbox all box/relax iso 1.0 vmax 0.001")
-            else:
-                if self.sett.data["BoxRelax"]:
-                    lines.append("fix fbox all box/relax iso 1.0 vmax 0.001")
-            lines.append("minimize  0.0 1.0e-6 %d   %d" % (max(100, int(Steps / 10)), Steps))
-            if (self.sett.force_evaluator["Relaxation"]["InitTemp4Opt"] >
-                    self.sett.force_evaluator["Relaxation"]["TargetTemp4NVT"]):
-                lines.append("velocity     all create %f 10 dist uniform" %
-                             (self.sett.force_evaluator["Relaxation"]["InitTemp4Opt"]))
-                t = self.sett.force_evaluator["Relaxation"]["TargetTemp4NVT"]
-                lines.append("fix 1nvt all nvt   temp  %f  %f   %f " %
-                             (t, t, 0.33 * self.sett.force_evaluator["Relaxation"]["InitTemp4Opt"]))
-                lines.append("run %d" % (self.sett.force_evaluator["Relaxation"]["NVTSteps4Opt"]))
-                lines.append("unfix 1nvt")
-                lines.append("minimize     0.0 1.0e-6 %d  %d" % (max(100, int(Steps / 10)), Steps))
-            lines.append("run    0")
-            #lines.append("print   etotal=$(pe+ke)")
-            lines.append("write_data     Runner_" + str(thiscolor) + "/tmp1.dat")
 
         elif "DYNMAT" in purpose:
             lines.append("group        gactive id <= %d" % nactive)
@@ -340,6 +324,28 @@ class PyLammpsRunner(object):
                 lines.append("minimize     0.0 1.0e-6 %d  %d" % (max(100, int(Steps / 10)), Steps))
             #lines.append("run    0")
             #lines.append("print   etotal=$(pe+ke)")
+        else:
+            Steps = self.sett.force_evaluator["NSteps4Relax"]
+            if purpose == "OPT" or purpose == "RELAX":
+                if self.sett.force_evaluator["Relaxation"]["BoxRelax"]:
+                    lines.append("fix fbox all box/relax iso 1.0 vmax 0.001")
+            else:
+                if self.sett.data["BoxRelax"]:
+                    lines.append("fix fbox all box/relax iso 1.0 vmax 0.001")
+            lines.append("minimize  0.0 1.0e-6 %d   %d" % (max(100, int(Steps / 10)), Steps))
+            if (self.sett.force_evaluator["Relaxation"]["InitTemp4Opt"] >
+                    self.sett.force_evaluator["Relaxation"]["TargetTemp4NVT"]):
+                lines.append("velocity     all create %f 10 dist uniform" %
+                             (self.sett.force_evaluator["Relaxation"]["InitTemp4Opt"]))
+                t = self.sett.force_evaluator["Relaxation"]["TargetTemp4NVT"]
+                lines.append("fix 1nvt all nvt   temp  %f  %f   %f " %
+                             (t, t, 0.33 * self.sett.force_evaluator["Relaxation"]["InitTemp4Opt"]))
+                lines.append("run %d" % (self.sett.force_evaluator["Relaxation"]["NVTSteps4Opt"]))
+                lines.append("unfix 1nvt")
+                lines.append("minimize     0.0 1.0e-6 %d  %d" % (max(100, int(Steps / 10)), Steps))
+            lines.append("run    0")
+            #lines.append("print   etotal=$(pe+ke)")
+            lines.append("write_data     Runner_" + str(thiscolor) + "/tmp1.dat")
         return lines
 
     def get_nproc_task(self, purpose):
@@ -384,15 +390,26 @@ class PyLammpsRunner(object):
                 lines[i] = line
         return lines
 
-    def ImportValue4RinputOpt(self, rinputs, thisExports=[]):
+    def ImportValue4RinputOpt(self, rinputs, purpose, thisExports=[]):
         isValid = True
-        if not self.sett.force_evaluator['ImportValue4RinputOpt']: isValid = False
+        if purpose == "DATATDB":
+            key1 = self.sett.force_evaluator["TrialDisps2Basin"]["Keyword4RinputTDB"]
+            key2 = self.sett.force_evaluator["TrialDisps2Basin"]["Keyword"]
+            KEYS = [[key1, key2]]
+        elif purpose == "RELAX":
+            if not self.sett.force_evaluator['ImportValue4RinputOpt']:
+                isValid = False
+            else:
+                KEYS = self.sett.force_evaluator['Keys4ImportValue4RinputOpt']
+        else:
+            isValid = False
+
         if thisExports is None:
             isValid = False
         elif len(thisExports) == 0:
             isValid = False
+
         if isValid:
-            KEYS = self.sett.force_evaluator['Keys4ImportValue4RinputOpt']
             InKeys = []
             InVals = []
             n = len(KEYS)

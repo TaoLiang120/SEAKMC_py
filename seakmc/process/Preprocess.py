@@ -3,6 +3,7 @@ import os
 from seakmc.restart.Restart import RESTART
 from seakmc.core.data import SeakmcData
 import seakmc.general.General as mygen
+import seakmc.process.DataDyn as mydatadyn
 
 
 def load_RESTART(Restartsett):
@@ -40,18 +41,20 @@ def initial_data_dynamics(thissett, seakmcdata, force_evaluator, LogWriter):
     if thissett.data["MoleDyn"]:
         logstr = "Molecular dynamics simulation of the initial structure ..."
         LogWriter.write_data(logstr)
-        [Eground, relaxed_coords, isValid, errormsg] = force_evaluator.run_runner("DATAMD", seakmcdata, thiscolor,
-                                                                                  nactive=seakmcdata.natoms,
-                                                                                  thisExports=None)
+        [Eground, relaxed_coords, isValid, errormsg] = mydatadyn.data_dynamics("DATAMD", force_evaluator, seakmcdata,
+                                                                               1,
+                                                                               nactive=seakmcdata.natoms,
+                                                                               nproc_task=1, thisExports=None)
         if not isValid:
             LogWriter.write_data(errormsg)
             quit()
         seakmcdata = SeakmcData.from_file("Runner_0/tmp1.dat", atom_style=thissett.data['atom_style_after'])
         seakmcdata.assert_settings(thissett)
         seakmcdata.to_atom_style()
-        [Eground, relaxed_coords, isValid, errormsg] = force_evaluator.run_runner("DATAOPT", seakmcdata, thiscolor,
-                                                                                  nactive=seakmcdata.natoms,
-                                                                                  thisExports=None)
+        [Eground, relaxed_coords, isValid, errormsg] = mydatadyn.data_dynamics("DATAOPT", force_evaluator, seakmcdata,
+                                                                               1,
+                                                                               nactive=seakmcdata.natoms,
+                                                                               nproc_task=1, thisExports=None)
         if not isValid:
             LogWriter.write_data(errormsg)
             quit()
@@ -62,9 +65,10 @@ def initial_data_dynamics(thissett, seakmcdata, force_evaluator, LogWriter):
     elif not thissett.data["Relaxed"]:
         logstr = "Relaxing the initial structure ..."
         LogWriter.write_data(logstr)
-        [Eground, relaxed_coords, isValid, errormsg] = force_evaluator.run_runner("DATAOPT", seakmcdata, thiscolor,
-                                                                                  nactive=seakmcdata.natoms,
-                                                                                  thisExports=None)
+        [Eground, relaxed_coords, isValid, errormsg] = mydatadyn.data_dynamics("DATAOPT", force_evaluator, seakmcdata,
+                                                                               1,
+                                                                               nactive=seakmcdata.natoms,
+                                                                               nproc_task=1, thisExports=None)
         if not isValid:
             LogWriter.write_data(errormsg)
             quit()
@@ -73,9 +77,10 @@ def initial_data_dynamics(thissett, seakmcdata, force_evaluator, LogWriter):
         seakmcdata.to_atom_style()
         seakmcdata.velocities = None
     else:
-        [Eground, relaxed_coords, isValid, errormsg] = force_evaluator.run_runner("DATAMD0", seakmcdata, thiscolor,
-                                                                                  nactive=seakmcdata.natoms,
-                                                                                  thisExports=None)
+        [Eground, relaxed_coords, isValid, errormsg] = mydatadyn.data_dynamics("DATAMD0", force_evaluator, seakmcdata,
+                                                                               1,
+                                                                               nactive=seakmcdata.natoms,
+                                                                               nproc_task=1, thisExports=None)
         if not isValid:
             LogWriter.write_data(errormsg)
             quit()
@@ -109,9 +114,10 @@ def preprocess(thissett):
         istep_this = thisRestart.istep_this
         Eground = thisRestart.Eground
         if Eground is None or Eground == 0.0:
-            [Eground, relaxed_coords, isValid, errormsg] = force_evaluator.run_runner("DATAMD0", seakmcdata, thiscolor,
-                                                                                      nactive=seakmcdata.natoms,
-                                                                                      thisExports=None)
+            [Eground, relaxed_coords, isValid, errormsg] = mydatadyn.data_dynamics("DATAMD0", force_evaluator,
+                                                                                   seakmcdata, 1,
+                                                                                   nactive=seakmcdata.natoms,
+                                                                                   nproc_task=1, thisExports=None)
             if not isValid:
                 LogWriter.write_data(errormsg)
                 quit()

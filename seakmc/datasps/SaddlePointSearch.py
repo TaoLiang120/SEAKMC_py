@@ -45,11 +45,10 @@ def generate_VN(spsearchsett, thisVNS, nactive, SNC=False, dmAV=None):
 
 def saddlepoint_search(thiscolor, istep, thissett, idav, thisAV, local_coords, thisSOPs, dynmatAV, SNC, CalPref,
                        thisSPS, Pre_Disps, thisnspsearch, thisVNS,
-                       df_delete_SPs, object_dict):
+                       df_delete_SPs, DFWriter, object_dict):
     out_paths = object_dict['out_paths']
     force_evaluator = object_dict['force_evaluator']
     LogWriter = object_dict['LogWriter']
-    DFWriter = object_dict['DFWriter']
 
     float_precision = thissett.system['float_precision']
     for idsps in range(thisnspsearch):
