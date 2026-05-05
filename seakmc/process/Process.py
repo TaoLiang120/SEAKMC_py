@@ -58,7 +58,7 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
         if thissett.force_evaluator["TrialDisps2Basin"]["TrialDisps2Basin"]:
             TDBsett = thissett.force_evaluator["TrialDisps2Basin"]
             thisTrialDisps = TrialDisps(TDBsett["Disps"], TDBsett["Ref_Length"], TDBsett["Target_StrainRate"],
-                 temp=thissett.kinetic_MC["temp"], mindisp=TDBsett["MinDisp"], maxdisp=TDBsett["MaxDisp"],
+                 temp=thissett.kinetic_MC["Temp"], mindisp=TDBsett["MinDisp"], maxdisp=TDBsett["MaxDisp"],
                                         straintype=TDBsett["StrainRateType"])
             for itrial in range(TDBsett["nDisps"]):
                 displacement = thisTrialDisps.displacements[itrial]
