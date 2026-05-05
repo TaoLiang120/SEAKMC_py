@@ -43,7 +43,7 @@ meanpref = 10
 ref_length = 100.0
 target_strainrate = 1.0e1
 
-strains = np.array([-1.0e-4, -2.0e-4, -4.0e-4])
+strains = np.array([1.0e-4, 2.0e-4, 4.0e-4])
 barrs = np.array([0.5, 0.48, 0.42])
 freqs = meanpref * np.exp(-barrs / KBT)
 timesteps = np.divide(1.0, freqs)

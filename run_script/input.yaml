@@ -57,7 +57,7 @@ force_evaluator:
     nproc4ReCal: auto
     TrialDisps2Basin:
       TrialDisps2Basin: False
-      RinputTDB: filename for TrialDisps2Basin
+      Rinput4TDB: filename for TrialDisps2Basin
       Ref_Length: must manually set in Angstrom
       Target_StrainRate: must manually set in 1/s
       Disps:
@@ -68,7 +68,7 @@ force_evaluator:
       MinDisp: 0.0001
       MaxDisp: 0.01
       StrainRateType: tension or compression
-      Keyword4RinputTDB: displacement (keyword in RinputTDB to be replaced by the target displacement)
+      Keyword4RinputTDB: "displacement equal" (keyword in RinputTDB to be replaced by the target displacement)
     OutFileHeader:
         - None
     ImportValue4RinputOpt: False
