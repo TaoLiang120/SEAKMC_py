@@ -20,7 +20,7 @@ class TrialDisp2Basin:
         self.seakmcdata = seakmcdata
         self.displacement = displacement
         self.itrial = itrial
-        self.key = self.key
+        self.key = key
         self.export = {self.key: self.displacement}
         self.thisdata = copy.deepcopy(self.seakmcdata)
         self.Eground = Eground
