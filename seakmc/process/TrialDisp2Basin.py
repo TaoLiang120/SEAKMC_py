@@ -133,7 +133,7 @@ def func1(x, a, b):
 
 class TrialDisps:
     def __init__(self, displacements, ref_length, target_strainrate,
-                 temp=300.0, mindisp=0.0001, maxdisp=0.01, straintype="tension"):
+                 temp=300.0, mindisp=0.0001, maxdisp=0.01, straintype=1):
         self.displacements = np.array(displacements)
         self.ref_length = ref_length
         self.target_strainrate = target_strainrate
@@ -197,18 +197,18 @@ class TrialDisps:
             self.target_strain = 0.0
         self.target_displacement = self.target_strain * self.ref_length
 
-        if self.straintype[0:3].upper() == "COM":
+        if self.straintype == 0:
             self.target_displacement = -abs(self.target_displacement)
         else:
             self.target_displacement = abs(self.target_displacement)
 
         if abs(self.target_displacement) < self.mindisp:
-            if self.straintype[0:3].upper() == "COM":
+            if self.straintype == 0:
                 self.target_displacement = -self.mindisp
             else:
                 self.target_displacement = self.mindisp
         if abs(self.target_displacement) > self.maxdisp:
-            if self.straintype[0:3].upper() == "COM":
+            if self.straintype == 0:
                 self.target_displacement = -self.maxdisp
             else:
                 self.target_displacement = self.maxdisp

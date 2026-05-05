@@ -232,7 +232,7 @@ class Settings:
         TrialDisps2Basin = {"TrialDisps2Basin": False, "RinputTDB": None, "Ref_Length": None,
                             "Target_StrainRate": None,
                             "Disps": [0.001, 0.002, 0.004, 0.008], "nDisps": 4,
-                            "MinDisp": 0.0001, "MaxDisp": 0.01, "StrainRateType": "tension",
+                            "MinDisp": 0.0001, "MaxDisp": 0.01, "StrainRateType": 1,
                             "Keyword4RinputTDB": "displacement", "Keyword": "displacement"}
         thisfeval = {"Bin": "pylammps", "Path2Bin": False, "Style": "pylammps", "nproc": "auto", "processors": False,
                      "partition": False, "Screen": False, "LogFile": False, "NSteps4Relax": 10000, "timestep": 0.002,
