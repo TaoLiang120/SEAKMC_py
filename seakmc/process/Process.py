@@ -88,6 +88,8 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
                 thisTDB.update_thisdata(thissett)
                 seakmcdata = copy.deepcopy(thisTDB.thisdata)
                 Eground = thisTDB.Eground
+                if thissett.visual["Write_Data_SPs"]["Write_KMC_Data"]:  seakmcdata.to_lammps_data(
+                    out_paths[1] + "/" + "KMC_" + str(istep) + ".dat", to_atom_style=True)
             ### End of TrialDisps2Basin ###
 
             logstr = f"istep KMC: {istep}"
