@@ -8,10 +8,10 @@ def data_dynamics(purpose, force_evaluator, data, ntask_tot, nactive=None, nproc
             nactive = data.natoms
 
     ntask_tot = 1
-    thiscolor = 1
+    thiscolor = 0
     [Eground, relaxed_coords, isValid, errormsg] = force_evaluator.run_runner(purpose, data, thiscolor,
-                                                                                      nactive=nactive,
-                                                                                      thisExports=thisExports,
-                                                                                      comm=None)
+                                                                            nactive=nactive,
+                                                                            thisExports=thisExports,
+                                                                            comm=None)
 
     return [Eground, relaxed_coords, isValid, errormsg]

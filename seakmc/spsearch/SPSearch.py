@@ -272,7 +272,6 @@ class SPSearch:
                     break
 
     def reprepare_runner(self):
-        self.force_evaluator.close()
         thisdata = copy.deepcopy(self.data)
         thisdata.to_saddle_point(self.XCR)
         [total_energy, coords, isValid, errormsg] = self.force_evaluator.init_spsearch_runner(thisdata, self.thiscolor,
@@ -318,7 +317,6 @@ class SPSearch:
     def calculate_dynamic_matrix(self, config="SP"):
         ## only code for Harmonic
         if self.ISVALID and self.dmAV is not None:
-            self.force_evaluator.close()
             self.dmAV.set_vib()
 
             thisdata = copy.deepcopy(self.data)
@@ -1138,7 +1136,6 @@ class Dimer(SPSearch):
             self.XA = np.hstack((X12[i], self.XNOT))
             thisdata = copy.deepcopy(self.data)
             thisdata.update_coords(self.XA)
-            self.force_evaluator.close()
             encalc, coords, isValid, errormsg = self.force_evaluator.run_runner("SPSRELAX", thisdata, self.thiscolor,
                                                                                 nactive=self.nactive)
             if not isValid:
@@ -1245,8 +1242,6 @@ class Dimer(SPSearch):
         self.remove_invalid_outputs()
 
     def dimer_finish(self):
-        self.force_evaluator.close()
-
         self.X0 = None
         self.XACT = None
         self.XNOT = None

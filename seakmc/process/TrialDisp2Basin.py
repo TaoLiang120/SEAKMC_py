@@ -198,20 +198,22 @@ class TrialDisps:
         self.target_displacement = self.target_strain * self.ref_length
 
         if self.straintype == 0:
-            self.target_displacement = -abs(self.target_displacement)
-        else:
-            self.target_displacement = abs(self.target_displacement)
-
-        if abs(self.target_displacement) < self.mindisp:
-            if self.straintype == 0:
+            if self.target_displacement >= 0.0:
                 self.target_displacement = -self.mindisp
             else:
+                if self.target_displacement > -self.mindisp:
+                    self.target_displacement = -self.mindisp
+                if self.target_displacement < -self.maxdisp:
+                    self.target_displacement = -self.maxdisp
+        else:
+            if self.target_displacement <= 0.0:
                 self.target_displacement = self.mindisp
-        if abs(self.target_displacement) > self.maxdisp:
-            if self.straintype == 0:
-                self.target_displacement = -self.maxdisp
             else:
-                self.target_displacement = self.maxdisp
+                if self.target_displacement < self.mindisp:
+                    self.target_displacement = self.mindisp
+                if self.target_displacement > self.maxdisp:
+                    self.target_displacement = self.maxdisp
+
         return self.target_displacement
 
 

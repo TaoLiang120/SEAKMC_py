@@ -17,9 +17,11 @@ __date__ = "October 7th, 2021"
 
 
 class LammpsRunner(object):
-    def __init__(self, sett):
+    def __init__(self, sett, subprocess=True):
         self.name = 'lammps'
         self.sett = sett
+        self.bin = None
+        self.subprocess = subprocess
         self.callscript = self.sett.force_evaluator['Bin']
         if isinstance(self.sett.force_evaluator['Path2Bin'], str):
             self.path_to_callscript = self.sett.force_evaluator['Path2Bin']
@@ -45,8 +47,11 @@ class LammpsRunner(object):
                 print(f"Cannot find {os.path.join(self.path_to_pot, self.sett.potential['FileName'])} !")
                 quit()
 
+    def init_binary(self, comm=None, Screen=False, Log=False, **kwargs):
+        self.bin = None
+
     def run_runner(self, purpose, data, thiscolor,
-                   nactive=None, thisExports=[]):
+                   nactive=None, thisExports=None, comm=None):
         purpose = purpose.upper()
         #nproc_task = self.get_nproc_task(purpose)
         nproc_task = 1
@@ -192,7 +197,7 @@ class LammpsRunner(object):
         thisdata = None
         return [total_energy, forces, isValid, errormsg]
 
-    def preparation(self, purpose, data, thiscolor, nactive=None, thisExports=[], nproc=1):
+    def preparation(self, purpose, data, thiscolor, nactive=None, thisExports=None, nproc=1):
         purpose = purpose.upper()
         if nactive is None:
             try:
@@ -518,7 +523,7 @@ class LammpsRunner(object):
                 lines[i] = line
         return lines
 
-    def ImportValue4RinputOpt(self, rinputs, purpose, thisExports=[]):
+    def ImportValue4RinputOpt(self, rinputs, purpose, thisExports=None):
         isValid = True
         if purpose == "DATATDB":
             key1 = self.sett.force_evaluator["TrialDisps2Basin"]["Keyword4RinputTDB"]
@@ -540,7 +545,7 @@ class LammpsRunner(object):
                 thiskeys = KEYS[i]
                 m = len(thiskeys)
                 if m == 2:
-                    if thiskeys[1] in export_Keys:
+                    if thiskeys[1] in thisExports:
                         InKeys.append(thiskeys[0])
                         InVals.append(thisExports[thiskeys[1]])
 

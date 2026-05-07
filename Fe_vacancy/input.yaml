@@ -1,0 +1,64 @@
+system:
+    Inteval4ShowProgress: 10
+    Restart:
+        LoadRestart: False
+        LoadFile: False
+        WriteRestart: False
+        AVStep4Restart: 1000
+        KMCStep4Restart: 1
+        Reset_Simulation_Time: False
+potential:
+    species:
+        - Fe
+        - P
+    masses:
+        - 1, 55.847
+    bondlengths:
+        - 1, 1, 2.5
+    coordnums:
+        - 1, 8
+    pair_style: eam/fs
+    FileName: Fe-P.eam.fs
+    Path2Pot: False
+    pair_coeff: False
+force_evaluator:
+    Bin: pylammps
+    Screen: False
+    TrialDisps2Basin:
+        TrialDisps2Basin: True
+        Rinput4TDB: in.TDB
+        Ref_Length: 28.5
+        Target_StrainRate: 10
+        Disps:
+            - 0.001
+            - 0.002
+            - 0.004
+            - 0.008
+        MinDisp: 0.0001
+        MaxDisp: 0.1
+        StrainRateType: 1
+        Keyword4RinputTDB: "displacement equal"
+data:
+    atom_style: atomic
+    FileName: data.vac
+    Relaxed: False
+kinetic_MC:
+    NSteps: 2
+    Temp: 800.0
+    AccStyle: NoAcc
+saddle_point:
+    ValidSPs:
+        CheckConnectivity: True
+active_volume:
+    Style: defects
+    DCut4PDR: 4.0
+    FindDefects:
+        Method: BLCN
+    DActive: 7.7
+    DBuffer: 3.0
+    DFixed: 10
+spsearch:
+    NSearch: 3
+    SearchBuffer: True
+    LocalRelax:
+        LocalRelax: True

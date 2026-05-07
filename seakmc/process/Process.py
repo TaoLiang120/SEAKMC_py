@@ -17,14 +17,16 @@ import seakmc.datasps.ReCalibrate as myRecal
 import seakmc.datasps.DataKMC as dataKMC
 from seakmc.process.TrialDisp2Basin import TrialDisp2Basin, TrialDisps
 
-
-
 def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
     out_paths = object_dict['out_paths']
     force_evaluator = object_dict['force_evaluator']
     LogWriter = object_dict['LogWriter']
     thisSummary = object_dict['thisSummary']
     DFWriter = object_dict['DFWriter']
+    GPU_args = thissett.force_evaluator["GPU"]
+    force_evaluator.init_binary(comm=None,
+                                Screen=thissett.force_evaluator['Screen'], Log=thissett.force_evaluator['LogFile'],
+                                **GPU_args)
 
     THIS_PATH = out_paths[-1]
     thisExports = thisSummary.export_dict
@@ -52,8 +54,6 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
         tickmc = time.time()
         DFWriter.init_deleted_SPs(istep)
         DFWriter.init_SPs(istep)
-        logstr = f"istep KMC: {istep}"
-        LogWriter.write_data(logstr)
 
         if thisRestart is None:
             if thissett.force_evaluator["TrialDisps2Basin"]["TrialDisps2Basin"]:
@@ -65,27 +65,31 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
                 for itrial in range(TDBsett["nDisps"]):
                     displacement = thisTrialDisps.displacements[itrial]
                     thisTDB = TrialDisp2Basin(seakmcdata, displacement, itrial, Eground=Eground,
-                                              key=TDBsett["Keyword4RinputTDB"])
+                                              key=TDBsett["Keyword"])
                     thisTDB.relax_basin(force_evaluator, LogWriter, ntask_tot=1, nproc_task=1)
                     thisTDB.run_seakmc(istep, thissett, object_dict)
                     thisTrialDisps.Add_one_trialdisp(thisTDB)
 
                 target_displacement = thisTrialDisps.apply_displacement()
-                logstr = f"trial displacements: {np.around(thisTrialDisps.displacements, 6)}"
+                logstr = "\n" + f"---summary of trial strains of {istep} KMC step---"
+                logstr += f"trial displacements: {np.around(thisTrialDisps.displacements, 6)}"
                 logstr += "\n" + f"strains (displacements/Ref_Length):{np.around(thisTrialDisps.strains, 6)}"
-                logstr += "\n" + f"one_over_freqs:{np.around(thisTrialDisps.one_over_freqs, 6)}"
+                logstr += "\n" + f"barriers: {np.around(thisTrialDisps.barrs, 6)} one_over_freqs:{np.around(thisTrialDisps.one_over_freqs, 6)}"
                 logstr += "\n" + f"strain rates:{np.around(thisTrialDisps.strainrates, 6)}"
                 logstr += "\n" + f"target strain:{np.around(thisTrialDisps.target_strain, 6)} target displacement:{np.around(target_displacement, 6)}"
-                logstr += "\n" + f"---End of trial displacements of {istep} KMC step---"
+                logstr += "\n" + f"---End of trial strains of {istep} KMC step---"
                 logstr += "\n"
                 LogWriter.write_data(logstr)
 
                 thisTDB = TrialDisp2Basin(seakmcdata, target_displacement, TDBsett["nDisps"], Eground=Eground,
-                                          key=TDBsett["Keyword4RinputTDB"])
+                                          key=TDBsett["Keyword"])
                 thisTDB.relax_basin(force_evaluator, LogWriter, ntask_tot=1, nproc_task=1)
                 seakmcdata = copy.deepcopy(thisTDB.thisdata)
                 Eground = thisTDB.Eground
             ### End of TrialDisps2Basin ###
+
+            logstr = f"istep KMC: {istep}"
+            LogWriter.write_data(logstr)
 
             seakmcdata.get_defects(LogWriter, last_de_center=last_de_center)
             dataout.visualize_data_AVs(thissett.visual, seakmcdata, istep, out_paths[1])
@@ -217,5 +221,7 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
                           f"{round(tockmc - tickmc, thissett.system['float_precision'])} s")
         logstr += "\n" + "==================================================================="
         LogWriter.write_data(logstr)
+
+    force_evaluator.close()
 
     return simulation_time

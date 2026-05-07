@@ -35,13 +35,13 @@ def chop_x_y(x, y, popt):
 mindisp = 0.00001
 maxdisp = 0.01
 KB = 8.617333262145e-5
-temp = 300.0
+temp = 600.0
 KBT = KB * temp
 meanpref = 10
 
 
 ref_length = 100.0
-target_strainrate = 1.0e5
+target_strainrate = 1.0e1
 
 strains = np.array([1.0e-6, 2.0e-6, 4.0e-6])
 barrs = np.array([0.5, 0.48, 0.42])
@@ -66,8 +66,22 @@ if isValid and len(strains) > 2:
 else:
         target_strainrate = 0.0
         target_displacement = mindisp
-
+straintype = 0
 print(f"target_strain: {target_strain} target_displacement: {target_displacement}")
+
+if straintype == 0:
+    target_displacement = -abs(target_displacement)
+else:
+    target_displacement = abs(target_displacement)
+
+if abs(target_displacement) < mindisp:
+    if straintype == 0:
+        target_displacement = -mindisp
+    else:
+        target_displacement = mindisp
+if abs(target_displacement) > maxdisp:
+    if straintype == 0:
+        target_displacement = -maxdisp
 if target_displacement < mindisp:
         target_displacement = mindisp
 if target_displacement > maxdisp:

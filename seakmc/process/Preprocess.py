@@ -95,6 +95,10 @@ def preprocess(thissett):
     out_paths = object_dict['out_paths']
     force_evaluator = object_dict['force_evaluator']
     LogWriter = object_dict['LogWriter']
+    GPU_args = thissett.force_evaluator["GPU"]
+    force_evaluator.init_binary(comm=None,
+                                Screen=thissett.force_evaluator['Screen'], Log=thissett.force_evaluator['LogFile'],
+                                **GPU_args)
 
     thiscolor = 0
     if thisRestart is None:
@@ -122,5 +126,6 @@ def preprocess(thissett):
                 LogWriter.write_data(errormsg)
                 quit()
         seakmcdata.to_lammps_data(out_paths[1] + "/" + "KMC_" + str(istep_this) + ".dat", to_atom_style=True)
+    force_evaluator.close()
 
     return seakmcdata, object_dict, Eground, thisRestart

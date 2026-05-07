@@ -18,9 +18,11 @@ __date__ = "October 7th, 2021"
 
 
 class VaspRunner(object):
-    def __init__(self, sett):
+    def __init__(self, sett, subprocess=True):
         self.name = 'vasp'
         self.sett = sett
+        self.bin = None
+        self.subprocess = subprocess
         self.callscript = self.sett.force_evaluator['Bin']
         if isinstance(self.sett.force_evaluator['Path2Bin'], str):
             self.path_to_callscript = self.sett.force_evaluator['Path2Bin']
@@ -36,7 +38,10 @@ class VaspRunner(object):
             print(f"Cannot find {os.path.join(self.path_to_callscript, self.callscript)} !")
             quit()
 
-    def run_runner(self, purpose, data, thiscolor, nactive=None, thisExports=None):
+    def init_binary(self, comm=None, Screen=False, Log=False, **kwargs):
+        self.bin = None
+
+    def run_runner(self, purpose, data, thiscolor, nactive=None, thisExports=None, comm=None):
 
         purpose = purpose.upper()
         #nproc_task = self.get_nproc_task(purpose)
@@ -360,7 +365,7 @@ class VaspRunner(object):
         else:
             return np.array([])
 
-    def ImportValue4RinputOpt(self, rinputs, thisExports=[]):
+    def ImportValue4RinputOpt(self, rinputs, thisExports=None):
         isValid = True
         if not self.sett.force_evaluator['ImportValue4RinputOpt']: isValid = False
         if thisExports is None:
@@ -376,7 +381,7 @@ class VaspRunner(object):
                 thiskeys = KEYS[i]
                 m = len(thiskeys)
                 if m == 2:
-                    if thiskeys[1] in export_Keys:
+                    if thiskeys[1] in thisExports.keys():
                         InKeys.append(thiskeys[0])
                         InVals.append(thisExports[thiskeys[1]])
 

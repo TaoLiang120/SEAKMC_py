@@ -15,7 +15,6 @@ __date__ = "October 7th, 2021"
 
 def calibrate_energy_with_DataSPs(thissett, DataSPs, seakmcdata, AVitags, Eground, object_dict, ReBias=False,
                                   float_precision=3):
-    out_paths = object_dict['out_paths']
     force_evaluator = object_dict['force_evaluator']
     LogWriter = object_dict['LogWriter']
 

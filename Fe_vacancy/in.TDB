@@ -1,0 +1,22 @@
+variable displacement equal 0.01
+
+units         metal
+dimension     3
+atom_style    molecular
+atom_modify   map array
+boundary      p p p
+pair_style    eam/fs
+read_data     tmp0.dat
+pair_coeff    *  *  /Users/taoliang/PycharmProjects/SEAKMC_py/Fe_vacancy/Fe-P.eam.fs  Fe P
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+timestep    0.002000
+compute     pe  all pe
+compute     ke  all ke
+
+
+group      gfixed id <= 5
+
+
+minimize     0.0 1.0e-6 1000   10000
+run        0
