@@ -7,12 +7,17 @@ def func1(x, a, b):
     return a * x + b
 
 def fit(x, y):
-        try:
-            popt, pcov = curve_fit(func1, x, y)
+        if len(x) == 2:
+            popt = np.linalg.solve(np.array([[x[0], 1.0], [x[1], 1.0]]), y)
+            #popt, pcov = curve_fit(func1, x, y)
             isValid = True
-        except:
-            popt = np.array([0.0, 0.0])
-            isValid = False
+        else:
+            try:
+                popt, pcov = curve_fit(func1, x, y)
+                isValid = True
+            except:
+                popt = np.array([0.0, 0.0])
+                isValid = False
         return isValid, popt
 
 
@@ -41,10 +46,10 @@ meanpref = 10
 
 
 ref_length = 100.0
-target_strainrate = 1.0e1
+target_strainrate = 1.0e3
 
-strains = np.array([1.0e-6, 2.0e-6, 4.0e-6])
-barrs = np.array([0.5, 0.48, 0.42])
+strains = np.array([1.0e-6, 2.0e-6])
+barrs = np.array([0.5, 0.48])
 freqs = meanpref * np.exp(-barrs / KBT)
 timesteps = np.divide(1.0, freqs)
 strainrates = np.divide(strains, timesteps) * 1.0e12
@@ -53,20 +58,21 @@ print(meanpref * np.exp(-0.5 / KBT))
 print(f"freqs: {freqs} timesteps: {timesteps}")
 print(f"strainrates: {strainrates} logstrainrates: {logstrainrates}")
 
-
-
-
 isValid, popt = fit(strains, logstrainrates)
-if isValid and len(strains) > 2:
+print(f"isValid: {isValid} popt: {popt}")
+
+if isValid:
+    if len(strains) > 2:
         x, y = chop_x_y(strains, logstrainrates, popt)
         if len(x) >= 2:
             isValid, popt = fit(x, y)
-        target_strain = (np.log(target_strainrate) - popt[1]) / popt[0]
-        target_displacement = target_strain * ref_length
+    target_strain = (np.log(target_strainrate) - popt[1]) / popt[0]
+    target_displacement = target_strain * ref_length
 else:
-        target_strainrate = 0.0
-        target_displacement = mindisp
-straintype = 0
+    target_strain = 0.0
+    target_displacement = mindisp
+
+straintype = 1
 print(f"target_strain: {target_strain} target_displacement: {target_displacement}")
 
 if straintype == 0:
