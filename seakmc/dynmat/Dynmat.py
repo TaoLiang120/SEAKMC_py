@@ -216,5 +216,7 @@ class VibMats:
             thispre = np.sum(np.log(self.groundvib.vib) - np.log(self.spvib.vib))
             thispre = np.exp(thispre)
             thispre = np.sqrt(self.UC4prefactor * thispre)
+            ndiff = len(self.groundvib.vib) - len(self.spvib.vib)
+            thispre = thispre / np.power(2.0 * np.pi, ndiff)
             #thispre = np.sqrt(Constants["UC4prefactor"]*thispres[-1])/(2.0*np.pi)
             return thispre
