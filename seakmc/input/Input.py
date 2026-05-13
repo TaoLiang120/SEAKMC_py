@@ -233,7 +233,7 @@ class Settings:
                             "Target_StrainRate": None,
                             "Disps": [0.001, 0.002, 0.004, 0.008], "nDisps": 4,
                             "MinDisp": 0.0001, "MaxDisp": 0.01, "StrainRateType": 1,
-                            "Keyword4RinputTDB": "displacement", "Keyword": "displacement"}
+                            "Keys4ImportValue4RinputTDB": [["displacement equal", "displacement"]]}
         thisfeval = {"Bin": "pylammps", "Path2Bin": False, "Style": "pylammps", "nproc": "auto", "processors": False,
                      "partition": False, "Screen": False, "LogFile": False, "NSteps4Relax": 10000, "timestep": 0.002,
                      "Master_Slave4ReCal": False, "RinputOpt": False, "RinputMD0": False, "nproc4ReCal": "auto",
@@ -244,13 +244,25 @@ class Settings:
         if "force_evaluator" in parameters:
             force_evaluator = parameters["force_evaluator"]
             keys4IV = []
+            keys4IVTDB = []
             for key in force_evaluator:
                 if key == "Relaxation":
                     for subkey in force_evaluator[key]:
                         thisfeval[key][subkey] = force_evaluator[key][subkey]
                 elif key == "TrialDisps2Basin":
                     for subkey in force_evaluator[key]:
-                        thisfeval[key][subkey] = force_evaluator[key][subkey]
+                        if subkey == "Keys4ImportValue4RinputTDB":
+                            thisstrs = force_evaluator[key][subkey]
+                            for i in range(len(thisstrs)):
+                                thislines = thisstrs[i].split(",")
+                                try:
+                                    thiskeylist = [thislines[0].strip(), thislines[1].strip()]
+                                    keys4IVTDB.append(thiskeylist)
+                                except:
+                                    pass
+                            thisfeval[key][subkey] = keys4IVTDB
+                        else:
+                            thisfeval[key][subkey] = force_evaluator[key][subkey]
                 elif key == "Keys4ImportValue4RinputOpt":
                     thisstrs = force_evaluator["Keys4ImportValue4RinputOpt"]
                     for i in range(len(thisstrs)):

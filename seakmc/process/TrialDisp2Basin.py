@@ -17,12 +17,16 @@ from seakmc.kmc.KMC import Basin
 
 KB = 8.617333262145e-5
 class TrialDisp2Basin:
-    def __init__(self, seakmcdata, displacement, itrial, Eground=0.0, key="displacement"):
+    def __init__(self, seakmcdata, displacement, itrial, Eground=0.0, istep=1, **system_exports):
         self.seakmcdata = seakmcdata
         self.displacement = displacement
         self.itrial = itrial
-        self.key = key
-        self.export = {self.key: self.displacement}
+        if system_exports is None:
+            self.export = {"displacement": self.displacement, "itrial": self.itrial}
+        else:
+            self.export = copy.deepcopy(system_exports)
+            self.export["displacement"] = self.displacement
+            self.export["itrial"] = self.itrial
         self.thisdata = copy.deepcopy(self.seakmcdata)
         self.Eground = Eground
         self.timeelapse = 0.0
@@ -140,7 +144,7 @@ def func1(x, a, b):
 
 class TrialDisps:
     def __init__(self, displacements, ref_length, target_strainrate,
-                 temp=300.0, mindisp=0.0001, maxdisp=0.01, straintype=1):
+                 temp=300.0, mindisp=0.0001, maxdisp=0.01, straintype=1, istep=0):
         self.displacements = np.array(displacements)
         self.ref_length = ref_length
         self.target_strainrate = target_strainrate

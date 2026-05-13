@@ -68,7 +68,8 @@ force_evaluator:
         MinDisp: 0.0001
         MaxDisp: 0.01
         StrainRateType: 1 for positive 0 for negative
-        Keyword4RinputTDB: "displacement equal" (keyword in RinputTDB to be replaced by the target displacement)
+        Keys4ImportValue4RinputTDB:
+            - "displacement equal", displacement
     OutFileHeader:
         - None
     ImportValue4RinputOpt: False

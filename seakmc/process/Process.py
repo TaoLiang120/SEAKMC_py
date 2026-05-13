@@ -61,11 +61,11 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
                 thisTrialDisps = TrialDisps(TDBsett["Disps"], TDBsett["Ref_Length"], TDBsett["Target_StrainRate"],
                                             temp=thissett.kinetic_MC["Temp"], mindisp=TDBsett["MinDisp"],
                                             maxdisp=TDBsett["MaxDisp"],
-                                            straintype=TDBsett["StrainRateType"])
+                                            straintype=TDBsett["StrainRateType"], istep=istep)
                 for itrial in range(TDBsett["nDisps"]):
                     displacement = thisTrialDisps.displacements[itrial]
                     thisTDB = TrialDisp2Basin(seakmcdata, displacement, itrial, Eground=Eground,
-                                              key=TDBsett["Keyword"])
+                                              istep=istep, **thisExports)
                     thisTDB.relax_basin(force_evaluator, LogWriter, ntask_tot=1, nproc_task=1)
                     thisTDB.update_thisdata(thissett)
                     thisTDB.run_seakmc(istep, thissett, object_dict)
@@ -83,7 +83,7 @@ def run_seakmc(thissett, seakmcdata, object_dict, Eground, thisRestart):
                 LogWriter.write_data(logstr)
 
                 thisTDB = TrialDisp2Basin(seakmcdata, target_displacement, TDBsett["nDisps"], Eground=Eground,
-                                          key=TDBsett["Keyword"])
+                                          istep=istep, **thisExports)
                 thisTDB.relax_basin(force_evaluator, LogWriter, ntask_tot=1, nproc_task=1)
                 thisTDB.update_thisdata(thissett)
                 seakmcdata = copy.deepcopy(thisTDB.thisdata)

@@ -70,10 +70,22 @@ class SeakmcSummary(object):
                 with open(self.summaryfile, 'w') as f:
                     f.write(thisstr)
 
+        self.init_export_dict(RESTART=RESTART)
+
+    def init_export_dict(self, RESTART=False):
         export_dict = {}
         for key in export_Keys:
             export_dict[key] = 0.0
         self.export_dict = export_dict
+        if RESTART in (None, False):
+            pass
+        else:
+            self.update_data_from_RESTART(RESTART)
+
+    def update_data_from_RESTART(self, thisRESTART):
+        self.export_dict["istep"] = thisRESTART.istep_this
+        self.export_dict["ground_energy"] = thisRESTART.Eground
+        self.export_dict["simulation_time"] = thisRESTART.simulation_time
 
     def update_data(self, thisdict):
         for key in thisdict:

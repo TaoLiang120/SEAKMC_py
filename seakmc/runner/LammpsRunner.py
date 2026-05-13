@@ -526,10 +526,10 @@ class LammpsRunner(object):
     def ImportValue4RinputOpt(self, rinputs, purpose, thisExports=None):
         isValid = True
         if purpose == "DATATDB":
-            key1 = self.sett.force_evaluator["TrialDisps2Basin"]["Keyword4RinputTDB"]
-            key2 = self.sett.force_evaluator["TrialDisps2Basin"]["Keyword"]
-            KEYS = [[key1, key2]]
-        elif purpose == "RELAX":
+            KEYS = self.sett.force_evaluator["TrialDisps2Basin"]["Keys4ImportValue4RinputTDB"]
+            if len(KEYS) == 0:
+                isValid = False
+        elif purpose == "OPT" or purpose == "RELAX":
             if not self.sett.force_evaluator['ImportValue4RinputOpt']:
                 isValid = False
             else:
