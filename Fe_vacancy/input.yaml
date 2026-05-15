@@ -36,7 +36,8 @@ force_evaluator:
         MinDisp: 0.0001
         MaxDisp: 0.01
         StrainRateType: 1
-        Keyword4RinputTDB: "displacement equal"
+        Keys4ImportValue4RinputTDB:
+            - "displacement equal", displacement
 data:
     atom_style: atomic
     FileName: data.vac
