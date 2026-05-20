@@ -17,13 +17,16 @@ from seakmc.kmc.KMC import Basin
 
 KB = 8.617333262145e-5
 class TrialDisp2Basin:
-    def __init__(self, seakmcdata, displacement, itrial, Eground=0.0, istep=1, **system_exports):
+    def __init__(self, seakmcdata, displacement, itrial, Eground=0.0, **system_exports):
         self.seakmcdata = seakmcdata
         self.displacement = displacement
         self.itrial = itrial
+        self.istep = 0
         if system_exports is None:
             self.export = {"displacement": self.displacement, "itrial": self.itrial}
         else:
+            if "istep" in system_exports:
+                self.istep = system_exports["istep"]
             self.export = copy.deepcopy(system_exports)
             self.export["displacement"] = self.displacement
             self.export["itrial"] = self.itrial

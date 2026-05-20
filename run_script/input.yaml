@@ -69,7 +69,7 @@ force_evaluator:
         MaxDisp: 0.01
         StrainRateType: 1 for positive 0 for negative
         Keys4ImportValue4RinputTDB:
-            - "displacement equal", displacement
+            - displacement equal, displacement
     OutFileHeader:
         - None
     ImportValue4RinputOpt: False

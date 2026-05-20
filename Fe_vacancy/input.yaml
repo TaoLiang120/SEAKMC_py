@@ -26,7 +26,7 @@ force_evaluator:
     Screen: False
     RinputOpt: in.relax
     TrialDisps2Basin:
-        TrialDisps2Basin: True
+        TrialDisps2Basin: False
         Rinput4TDB: in.TDB
         Ref_Length: 28.5
         Target_StrainRate: 10
@@ -37,13 +37,13 @@ force_evaluator:
         MaxDisp: 0.01
         StrainRateType: 1
         Keys4ImportValue4RinputTDB:
-            - "displacement equal", displacement
+            - displacement equal, displacement
 data:
     atom_style: atomic
-    FileName: data.vac
-    Relaxed: False
+    FileName: Fe2001.dat
+    Relaxed: True
 kinetic_MC:
-    NSteps: 2
+    NSteps: 1
     Temp: 800.0
     AccStyle: NoAcc
 saddle_point:
@@ -53,12 +53,14 @@ active_volume:
     Style: defects
     DCut4PDR: 4.0
     FindDefects:
-        Method: BLCN
+        Method: WS
+        ReferenceData: Fe2000.dat
+        atom_style4Ref: atomic
     DActive: 7.7
     DBuffer: 3.0
     DFixed: 10
 spsearch:
-    NSearch: 3
+    NSearch: 1
     SearchBuffer: True
     LocalRelax:
         LocalRelax: True
